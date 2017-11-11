@@ -22,6 +22,7 @@ SOULIGNE = '\033[4m'
 casevirus=BLEU+"\t(◣_◢)\t"+BLANC
 casevide=ROUGE+"\t   .   \t"+BLANC
 casejoueur=VERT+"\t(⌐■_■)\t"+BLANC
+casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
 
 grille=[ROUGE+"\t   .   \t"+BLANC]*100
 
@@ -83,25 +84,40 @@ def keyinput(position):
         position=[oldpos,newpos]
         return position
 
+    if inputkey==" ":
+        newpos=oldpos
+        position=[oldpos,newpos]
+        return position
+
+
 
 def movejoueur(position,continuer):
         testposition=keyinput(position)
         oldpos=testposition[0]
         newpos=testposition[1]
 
-        if grille[newpos] != casevide:
-            print ("Vous ne pouvez pas avancer plus loin")
-            print (position)
-            continuer=0
-            return position
+        if newpos != oldpos:
+            if grille[newpos] != casevide: #Test si on va sur une case non vide
+                print ("Vous ne pouvez pas avancer plus loin")
+                print (position)
+                continuer=0
+                return position
 
-        if grille[newpos] == casevide:
-            grille[oldpos]=casevide
-            grille[newpos]=casejoueur
-            position=[oldpos,newpos]
+            if grille[newpos] == casevide: #test si on va sur une case vide //TODO INSERER UN TEST DE CASE BOMBE
+                grille[oldpos]=casevide
+                grille[newpos]=casejoueur
+                position=[oldpos,newpos]
+                showGameBoard(grille)
+                print (position)
+                return position
+
+        if newpos == oldpos:
+            grille[newpos]=casejoueurbomb
             showGameBoard(grille)
             print (position)
+            continuer=1
             return position
+
 
 
 #MAIN
