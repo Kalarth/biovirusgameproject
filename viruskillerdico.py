@@ -1,8 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import os
+import sys
 import random
-from tkinter import *
+#from tkinter import *
 
 
 
@@ -89,7 +91,7 @@ def initmurs():
 
 
 def initjoueur():
-    joueur=mouvement["newpos"]
+    joueur=mouvement["oldpos"]
     grille[joueur]=casejoueur
 
 
@@ -143,11 +145,11 @@ def keyinput(mouvement):
 
 
 def movejoueur(mouvement,continuer):
-        testmouvement=dict(keyinput(mouvement))
+        testmouvement=keyinput(mouvement).copy()
         oldpos=testmouvement["oldpos"]
         newpos=testmouvement["newpos"]
         voh=testmouvement["typedeplacement"]
-
+        print (newpos)
         if newpos != oldpos:
             if  newpos<0 or newpos>=100 or grille[newpos] != casevide or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
                 #Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
@@ -194,8 +196,8 @@ def movejoueur(mouvement,continuer):
 print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
 
 mouvement={}
-mouvement["oldpos"]=0
-mouvement["newpos"]=random.randint(0,99)
+mouvement["oldpos"]=random.randint(0,99)
+mouvement["newpos"]=0
 mouvement["typedeplacement"]="n"
 mouvement["continuer"]=1
 
@@ -210,5 +212,6 @@ initmurs()
 initjoueur()
 showGameBoard(grille,message)
 
-while mouvement["continuer"]==1:
+continuer=mouvement["continuer"]
+while continuer==1:
     mouvement=movejoueur(mouvement,continuer)
