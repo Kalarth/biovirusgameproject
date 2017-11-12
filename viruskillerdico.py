@@ -68,6 +68,9 @@ def initvirus():
     grille[vir2]=casevirus
     grille[vir4]=casevirus
     grille[vir3]=casevirus
+    return virus
+
+
 
 def initmurs():
     debutmurs=random.sample(range(0,69),4)
@@ -91,73 +94,90 @@ def initmurs():
 
 
 def initjoueur():
-    joueur=mouvement["oldpos"]
+    joueur=mouvement["newpos"]
     grille[joueur]=casejoueur
-
+    print(mouvement)
 
 def keyinput(mouvement):
-    oldpos=mouvement["oldpos"]
+    oldpos=mouvement['oldpos']
+    newpos=mouvement['newpos']
     voh=mouvement["typedeplacement"] #vertical ou horizontal ou none
+    #print ("----POSTEST: ",mouvement)
 
     inputkey=input("Saisissez votre direction:  ")
     if inputkey=="z" and (voh=="v" or voh=="n"):  #aller vers le haut si on s'est déplacé verticalement ou pas déplacé
+        oldpos=newpos
         newpos=oldpos-10
         voh="v" #vertical ou horizontal
         mouvement["newpos"]=newpos
+        mouvement["oldpos"]=oldpos
         mouvement["typedeplacement"]=voh
-        #mouvement=[oldpos,newpos,voh]
+
         return mouvement
 
     if inputkey=="q" and (voh=="h" or voh=="n"):    #aller vers la gauche si on s'est déplacé horizontalement ou pas déplacé
+        oldpos=newpos
         newpos=oldpos-1
         voh="h" #vertical ou horizontal
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
+        mouvement["oldpos"]=oldpos
+        mouvement["typedeplacement"]=voh
         return mouvement
 
 
     if inputkey=="s" and (voh=="v" or voh=="n"):    #aller vers le bas si on s'est déplacé verticalement ou pas déplacé
+        oldpos=newpos
         newpos=oldpos+10
         voh="v" #vertical ou horizontal
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
+        mouvement["oldpos"]=oldpos
+        mouvement["typedeplacement"]=voh
         return mouvement
 
 
     if inputkey=="d" and (voh=="h" or voh=="n"):    #aller vers la droite si on s'est déplacé horizontalement ou pas déplacé
+        oldpos=newpos
         newpos=oldpos+1
         voh="h" #vertical ou horizontal
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
+        mouvement["oldpos"]=oldpos
+        mouvement["typedeplacement"]=voh
         return mouvement
 
     if (inputkey=="1" and voh=="n"):                #poser une bombe si on ne s'est pas déplace
         newpos=oldpos
         voh="n" #vertical ou horizontal
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
+        mouvement["typedeplacement"]=voh
         return mouvement
 
     if (inputkey=="1" and voh!="n"):                #ne pas poser une bombe si on s'est déplacé
         newpos=oldpos
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
         return mouvement
+
+    if (inputkey==" " and voh!="n"):                #ne pas poser une bombe si on s'est déplacé
+        mouvement["continuer"]=0
+        print(mouvement)
+        return mouvement
+
 
     else:
         return mouvement
 
 
 
-def movejoueur(mouvement,continuer):
-        testmouvement=keyinput(mouvement).copy()
-        oldpos=testmouvement["oldpos"]
-        newpos=testmouvement["newpos"]
+def movejoueur():
+        testmouvement=keyinput(mouvement)
+        oldpos=testmouvement['oldpos']
+        newpos=testmouvement['newpos']
         voh=testmouvement["typedeplacement"]
-        print (newpos)
+
         if newpos != oldpos:
             if  newpos<0 or newpos>=100 or grille[newpos] != casevide or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
                 #Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
                 message="Vous ne pouvez pas avancer dans cette direction"
                 showGameBoard(grille,message)
-                #print ("Vous ne pouvez pas avancer dans cette direction")
-                print (mouvement)
-                continuer=1
                 return mouvement
 
             if grille[newpos] == casevide: #test si on va sur une case vide
@@ -166,19 +186,19 @@ def movejoueur(mouvement,continuer):
                 else:
                     grille[oldpos]=casevide
                 grille[newpos]=casejoueur
-                mouvement=[oldpos,newpos,voh]
-
+                mouvement["oldpos"]=oldpos
+                mouvement["newpos"]=newpos
+                mouvement["voh"]=voh
                 message="Vous avancez"
                 showGameBoard(grille,message)
 
-                print (mouvement)
+                #print ("MOUVEMENT DANS MOVEJOUEUR: ",mouvement)
                 return mouvement
 
         if (newpos == oldpos and voh!="n"):
             grille[newpos]=casejoueur
             message="Bombes inaccessible après déplacement"
             showGameBoard(grille,message)
-            continuer=1
             return mouvement
 
 
@@ -186,8 +206,11 @@ def movejoueur(mouvement,continuer):
             grille[newpos]=casejoueurbomb
             message="Vous venez de déposer une bombe"
             showGameBoard(grille,message)
-            continuer=1
             return mouvement
+
+
+def movevirus():
+
 
 
 
@@ -196,14 +219,13 @@ def movejoueur(mouvement,continuer):
 print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
 
 mouvement={}
-mouvement["oldpos"]=random.randint(0,99)
-mouvement["newpos"]=0
+mouvement["oldpos"]=0
+mouvement["newpos"]=random.randint(0,99)
 mouvement["typedeplacement"]="n"
 mouvement["continuer"]=1
+#mouvement={"oldpos":random.randint(0,99),"newpos":0,"typedeplacement":"n","continuer":1}
 
 
-
-print (mouvement)
 continuer=1
 message="Début du jeu"
 
@@ -212,6 +234,6 @@ initmurs()
 initjoueur()
 showGameBoard(grille,message)
 
-continuer=mouvement["continuer"]
 while continuer==1:
-    mouvement=movejoueur(mouvement,continuer)
+    mouvement=movejoueur()
+    continuer=mouvement["continuer"]
