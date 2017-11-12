@@ -89,19 +89,21 @@ def initmurs():
 
 
 def initjoueur():
-    joueur=mouvement[1]
+    joueur=mouvement["newpos"]
     grille[joueur]=casejoueur
 
 
 def keyinput(mouvement):
-    oldpos=mouvement[1]
-    voh=mouvement[2] #vertical ou horizontal ou none
+    oldpos=mouvement["oldpos"]
+    voh=mouvement["typedeplacement"] #vertical ou horizontal ou none
 
     inputkey=input("Saisissez votre direction:  ")
     if inputkey=="z" and (voh=="v" or voh=="n"):  #aller vers le haut si on s'est déplacé verticalement ou pas déplacé
         newpos=oldpos-10
         voh="v" #vertical ou horizontal
-        mouvement=[oldpos,newpos,voh]
+        mouvement["newpos"]=newpos
+        mouvement["typedeplacement"]=voh
+        #mouvement=[oldpos,newpos,voh]
         return mouvement
 
     if inputkey=="q" and (voh=="h" or voh=="n"):    #aller vers la gauche si on s'est déplacé horizontalement ou pas déplacé
@@ -135,21 +137,16 @@ def keyinput(mouvement):
         mouvement=[oldpos,newpos,voh]
         return mouvement
 
-    if (inputkey==""):                #ne pas poser une bombe si on s'est déplacé
-        continuer=0
-        return mouvement
-
-
     else:
         return mouvement
 
 
 
 def movejoueur(mouvement,continuer):
-        testmouvement=keyinput(mouvement)
-        oldpos=testmouvement[0]
-        newpos=testmouvement[1]
-        voh=testmouvement[2]
+        testmouvement=dict(keyinput(mouvement))
+        oldpos=testmouvement["oldpos"]
+        newpos=testmouvement["newpos"]
+        voh=testmouvement["typedeplacement"]
 
         if newpos != oldpos:
             if  newpos<0 or newpos>=100 or grille[newpos] != casevide or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
@@ -196,7 +193,14 @@ def movejoueur(mouvement,continuer):
 
 print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
 
-mouvement=[0,random.randint(0,99),"n"]
+mouvement={}
+mouvement["oldpos"]=0
+mouvement["newpos"]=random.randint(0,99)
+mouvement["typedeplacement"]="n"
+mouvement["continuer"]=1
+
+
+
 print (mouvement)
 continuer=1
 message="Début du jeu"
@@ -206,5 +210,5 @@ initmurs()
 initjoueur()
 showGameBoard(grille,message)
 
-while continuer==1:
+while mouvement["continuer"]==1:
     mouvement=movejoueur(mouvement,continuer)
