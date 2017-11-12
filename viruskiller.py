@@ -20,22 +20,19 @@ GRAS = '\033[1m'
 SOULIGNE = '\033[4m'
 JAUNE="\033[33m"
 
-casevirus=BLEU+"\t(◣_◢)\t"+BLANC
+#type de case
+casevirus=BLEU+"\t (◣_◢) \t"+BLANC
 casevide=ROUGE+"\t   .   \t"+BLANC
 casejoueur=VERT+"\t (•ิ_•ิ)\t"+BLANC
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
-casebomb=""+JAUNE+"\t  (ϟ)\t"+BLANC
-caseenergie=JAUNE+"\t (ϟ)\t"+BLANC
-casemurver=JAUNE+"\t   █   \t"+BLANC
-casemurhor=JAUNE+"\t   ⬜  \t"+BLANC
+casebomb=""+JAUNE+"\t(ϟ)\t"+BLANC
+caseenergie=JAUNE+"\t(ϟ)\t"+BLANC
+casemurver="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
+casemurhor="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 
-
+#grille
 grille=[ROUGE+"\t   .   \t"+BLANC]*100
 
-
-
-print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"
-      + BLANC)
 
 
 def showGameBoard(grille):
@@ -43,6 +40,7 @@ def showGameBoard(grille):
     barrehaute=(JAUNE+"▄"+BLANC)*161
     barrebasse=(JAUNE+"▀"+BLANC)*161
     print (barrehaute)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC)
     print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC)
     for i in range(0,100):
         if i%10==0:
@@ -97,32 +95,39 @@ def initjoueur():
 
 def keyinput(position):
     oldpos=position[1]
+    voh=position[2] #vertical ou horizontal ou none
+
     inputkey=input("Saisissez votre direction:  ")
-    if inputkey=="z":
+    if inputkey=="z" and (voh=="v" or voh=="n"):
         newpos=oldpos-10
-        position=[oldpos,newpos]
+        voh="v" #vertical ou horizontal
+        position=[oldpos,newpos,voh]
         return position
 
-    if inputkey=="q":
+    if inputkey=="q" and (voh=="h" or voh=="n"):
         newpos=oldpos-1
-        position=[oldpos,newpos]
+        voh="h" #vertical ou horizontal
+        position=[oldpos,newpos,voh]
         return position
 
 
-    if inputkey=="s":
+    if inputkey=="s" and (voh=="v" or voh=="n"):
         newpos=oldpos+10
-        position=[oldpos,newpos]
+        voh="v" #vertical ou horizontal
+        position=[oldpos,newpos,voh]
         return position
 
 
-    if inputkey=="d":
+    if inputkey=="d" and (voh=="h" or voh=="n"):
         newpos=oldpos+1
-        position=[oldpos,newpos]
+        voh="h" #vertical ou horizontal
+        position=[oldpos,newpos,voh]
         return position
 
     if inputkey==" ":
         newpos=oldpos
-        position=[oldpos,newpos]
+        voh="n" #vertical ou horizontal
+        position=[oldpos,newpos,voh]
         return position
 
     else:
@@ -134,11 +139,12 @@ def movejoueur(position,continuer):
         testposition=keyinput(position)
         oldpos=testposition[0]
         newpos=testposition[1]
+        voh=testposition[2]
 
         if newpos != oldpos:
             if  newpos<0 or newpos>=100 or grille[newpos] != casevide or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
                 #Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
-                print ("Vous ne pouvez pas avancer plus loin")
+                print ("Vous ne pouvez pas avancer dans cette direction")
                 print (position)
                 continuer=0
                 return position
@@ -149,7 +155,7 @@ def movejoueur(position,continuer):
                 else:
                     grille[oldpos]=casevide
                 grille[newpos]=casejoueur
-                position=[oldpos,newpos]
+                position=[oldpos,newpos,voh]
                 showGameBoard(grille)
                 print (position)
                 return position
@@ -165,7 +171,9 @@ def movejoueur(position,continuer):
 
 #MAIN
 
-position=[0,random.randint(0,99)]
+print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
+
+position=[0,random.randint(0,99),"n"]
 print (position)
 continuer=1
 
