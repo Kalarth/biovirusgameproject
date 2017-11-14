@@ -188,7 +188,7 @@ def movejoueur():
                 grille[newpos]=casejoueur
                 mouvement["oldpos"]=oldpos
                 mouvement["newpos"]=newpos
-                mouvement["voh"]=voh
+                mouvement["testmouvement"]=voh
                 message="Vous avancez"
                 showGameBoard(grille,message)
 
@@ -209,7 +209,7 @@ def movejoueur():
             return mouvement
 
 
-def movevirus():
+#def movevirus():
 
 
 
