@@ -195,7 +195,7 @@ def movejoueur(mouvement,continuer,bombeuse):
             message="Vous venez de déposer une bombe"
             showGameBoard(grille,message)
             continuer=1
-            bombeuse=1 #Pas sur si c'est le meilleur endroit ou la mettre.
+            usebombe=1 #Pas sur si c'est le meilleur endroit ou la mettre.
             return mouvement, bombeuse
 
 def gameover(bombeslist, continuer):
@@ -209,7 +209,7 @@ def gameover(bombeslist, continuer):
 return(continuer)
 
 def bombetictoc (bombeslist,bombeuse): #Diminue la valeur des bombes de 1 chaque tour jusqu'a 0 si elles n'ont pas été utilisées, cree une nouvelle bombe si elles ont été utilisées.
-    if bombeuse==0
+    if usebombe==0
         for i in range (0,len(bombeslist)):
             if bombeslist(i)>0:
                 bombeslist(i)=bombeslist(i)-1
@@ -227,7 +227,7 @@ print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
 mouvement=[0,random.randint(0,99),"n"]
 print (mouvement)
 continuer=1
-bombeuse=0  #Determine si une bombe a été utilisée pendant le tour
+usebombe=0  #Determine si une bombe a été utilisée pendant le tour
 message="Début du jeu"
 
 initvirus()
@@ -238,5 +238,5 @@ showGameBoard(grille,message)
 
 while continuer==1:
     mouvement=movejoueur(mouvement,continuer, bombeuse)
-    bombetictoc(bombeslist,bombeuse)
+    bombetictoc(bombeslist,usebombe)
     gameover(bombeslist,continuer)
