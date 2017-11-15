@@ -26,6 +26,7 @@ casevirus=BLEU+"\t (◣_◢) \t"+BLANC
 casevide=ROUGE+"\t   .   \t"+BLANC
 casejoueur=VERT+"\t (•ิ_•ิ)\t"+BLANC
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
+
 casebomb=""+JAUNE+"\t(ϟ)\t"+BLANC
 caseenergie=JAUNE+"\t(ϟ)\t"+BLANC
 casemurver="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
@@ -107,14 +108,14 @@ def keyinput(mouvement):
         voh="v" #vertical ou horizontal
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
     if inputkey=="q" and (voh=="h" or voh=="n"):    #aller vers la gauche si on s'est déplacé horizontalement ou pas déplacé
         newpos=oldpos-1
         voh="h" #vertical ou horizontal
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
 
     if inputkey=="s" and (voh=="v" or voh=="n"):    #aller vers le bas si on s'est déplacé verticalement ou pas déplacé
@@ -122,7 +123,7 @@ def keyinput(mouvement):
         voh="v" #vertical ou horizontal
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
 
     if inputkey=="d" and (voh=="h" or voh=="n"):    #aller vers la droite si on s'est déplacé horizontalement ou pas déplacé
@@ -130,26 +131,48 @@ def keyinput(mouvement):
         voh="h" #vertical ou horizontal
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
     if (inputkey=="1" and voh=="n"):                #poser une bombe si on ne s'est pas déplace
         newpos=oldpos
         voh="n" #vertical ou horizontal
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
-    if (inputkey=="1" and voh!="n"):                #ne pas poser une bombe si on s'est déplacé
+    if (inputkey=="2" and voh=="n"):                #poser une bombe si on ne s'est pas déplace
+        newpos=oldpos
+        voh="n" #vertical ou horizontal
+        continuer=1
+        mouvement=[oldpos,newpos,voh,continuer]
+        return mouvement,inputkey
+
+    if (inputkey=="3" and voh=="n"):                #poser une bombe si on ne s'est pas déplace
+        newpos=oldpos
+        voh="n" #vertical ou horizontal
+        continuer=1
+        mouvement=[oldpos,newpos,voh,continuer]
+        return mouvement,inputkey
+
+    if (inputkey=="4" and voh=="n"):                #poser une bombe si on ne s'est pas déplace
+        newpos=oldpos
+        voh="n" #vertical ou horizontal
+        continuer=1
+        mouvement=[oldpos,newpos,voh,continuer]
+        return mouvement,inputkey
+
+
+    if ((inputkey=="1" or inputkey=="2" or inputkey=="3" or inputkey=="4") and voh!="n"):                #ne pas poser une bombe si on s'est déplacé
         newpos=oldpos
         continuer=1
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
     if (inputkey==" "):                #ne pas poser une bombe si on s'est déplacé
         newpos=oldpos
         continuer=0
         mouvement=[oldpos,newpos,voh,continuer]
-        return mouvement
+        return mouvement,inputkey
 
 
     else:
@@ -158,11 +181,12 @@ def keyinput(mouvement):
 
 
 def movejoueur(mouvement):
-        testmouvement=keyinput(mouvement)
+        testmouvement,inputkey=keyinput(mouvement)
         oldpos=testmouvement[0]
         newpos=testmouvement[1]
         voh=testmouvement[2]
         continuer=testmouvement[3]
+        print(inputkey)
 
         if continuer==0:
             mouvement=[oldpos,newpos,voh,continuer]
@@ -201,9 +225,29 @@ def movejoueur(mouvement):
 
         if (newpos == oldpos and voh=="n"):
             grille[newpos]=casejoueurbomb
-            message="Vous venez de déposer une bombe"
-            showGameBoard(grille,message)
-            return mouvement
+            print ("INPUT=",inputkey)
+            if inputkey=="1":
+                bombeloader["bombe1"][0]=newpos
+                message="Vous venez de déposer la bombe 1"
+                showGameBoard(grille,message)
+                return mouvement,bombeloader
+            if inputkey=="2":
+                bombeloader["bombe2"][0]=newpos
+                message="Vous venez de déposer la bombe 2"
+                showGameBoard(grille,message)
+                return mouvement,bombeloader
+            if inputkey=="3":
+                bombeloader["bombe3"][0]=newpos
+                message="Vous venez de déposer la bombe 3"
+                showGameBoard(grille,message)
+                return mouvement,bombeloader
+            if inputkey=="4":
+                bombeloader["bombe4"][0]=newpos
+                message="Vous venez de déposer la bombe 4"
+                showGameBoard(grille,message)
+                return mouvement,bombeloader
+
+
 
 def movevirus(numvirus,dirvalue):
     oldvirpos=virus[numvirus]
@@ -277,6 +321,11 @@ def randommovevirus(virus):
 
 
 
+
+bombeloader={"bombe1":[0,8],"bombe2":[0,6],"bombe3":[0,4],"bombe4":[0,2]} #bombe:[position,puissance]
+#mouvement={"oldpos":random.randint(0,99),"newpos":0,"typedeplacement":"n","continuer":1}
+
+
 #MAIN
 
 print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
@@ -296,7 +345,8 @@ bombe=0 #experimental attention
 while bombe==0:
 
     while mouvement[3]==1:
-        mouvement=movejoueur(mouvement)
+        mouvement,bombeloader=movejoueur(mouvement)
+        print("BOMBE DANS BOUCLE: ",bombeloader)
     randommovevirus(virus)
     mouvement[2]="n"
     mouvement[3]=1

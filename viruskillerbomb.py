@@ -152,7 +152,7 @@ def keyinput(mouvement):
 
 
 
-def movejoueur(mouvement,continuer,bombeuse):
+def movejoueur(mouvement,continuer,usebombe):
         testmouvement=keyinput(mouvement)
         oldpos=testmouvement[0]
         newpos=testmouvement[1]
@@ -196,28 +196,30 @@ def movejoueur(mouvement,continuer,bombeuse):
             showGameBoard(grille,message)
             continuer=1
             usebombe=1 #Pas sur si c'est le meilleur endroit ou la mettre.
-            return mouvement, bombeuse
+            return mouvement, usebombe
+
+
 
 def gameover(bombeslist, continuer):
     cpt=0
     for i in range (0,len(bombeslist)):
-        if bombeslist(i)==0
-        cpt=cpt+1
+        if bombeslist(i)==0:
+            cpt=cpt+1
     if cpt==4:
         continuer=0
-        print "GAME OVER"
-return(continuer)
+        print ("GAME OVER")
+    return continuer
 
-def bombetictoc (bombeslist,bombeuse): #Diminue la valeur des bombes de 1 chaque tour jusqu'a 0 si elles n'ont pas été utilisées, cree une nouvelle bombe si elles ont été utilisées.
-    if usebombe==0
+def bombetictoc (bombeslist,usebombe): #Diminue la valeur des bombes de 1 chaque tour jusqu'a 0 si elles n'ont pas été utilisées, cree une nouvelle bombe si elles ont été utilisées.
+    if usebombe==0:
         for i in range (0,len(bombeslist)):
-            if bombeslist(i)>0:
-                bombeslist(i)=bombeslist(i)-1
+            if bombeslist[i]>0:
+                bombeslist[i]=bombeslist[i]-1
     else:
         for i in range (0,len(bombeslist)-1):
-            bombeslist(i)=bombeslist(i+1)   #change la position des bombes pour enlever celle utilisee (par defaut la premiere.)
-        bombelist(4)=random.sample([2,4,6,8]) #cree une nouvelle bombe en derniere position
-return bombeslist
+            bombeslist[i]=bombeslist[i+1]   #change la position des bombes pour enlever celle utilisee (par defaut la premiere.)
+        bombelist[4]=random.sample([2,4,6,8]) #cree une nouvelle bombe en derniere position
+    return bombeslist
 
 
 #MAIN
@@ -229,6 +231,8 @@ print (mouvement)
 continuer=1
 usebombe=0  #Determine si une bombe a été utilisée pendant le tour
 message="Début du jeu"
+bombeslist=[]
+
 
 initvirus()
 initmurs()
@@ -237,6 +241,6 @@ initbombes()
 showGameBoard(grille,message)
 
 while continuer==1:
-    mouvement=movejoueur(mouvement,continuer, bombeuse)
+    mouvement=movejoueur(mouvement,continuer, usebombe)
     bombetictoc(bombeslist,usebombe)
     gameover(bombeslist,continuer)
