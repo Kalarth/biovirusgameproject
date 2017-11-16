@@ -278,7 +278,7 @@ def movejoueur(mouvement):
                 mouvement=[oldpos,newpos,voh,continuer]
 
                 message="Vous avancez"
-                boostbomb(bombeloader)
+                boostbombe(bombeloader)
                 showGameBoard(grille,message)
                 #print (mouvement)
                 return mouvement,bombeloader
@@ -413,7 +413,7 @@ def movevirus(numvirus,dirvalue):
     #    print("PAS DANS LA RANGE DE LA GRILLE")
 
 
-def boostbomb(bombeloader):
+def boostbombe(bombeloader):
     bombeloader["bombe1"][1]=bombeloader["bombe1"][1]+1
     bombeloader["bombe2"][1]=bombeloader["bombe2"][1]+1
     bombeloader["bombe3"][1]=bombeloader["bombe3"][1]+1
@@ -421,10 +421,51 @@ def boostbomb(bombeloader):
     print ("BOUUUUUMMMM")
     return bombeloader
 
+def boom(bombeloader):
+    activebombe=[]
+    if bombeloader["bombe1"][0]!="n":
+        activebombe.append(bombeloader["bombe1"][0])
+        activebombe.append(bombeloader["bombe1"][1])
+    if bombeloader["bombe2"][0]!="n":
+        activebombe.append(bombeloader["bombe2"][0])
+        activebombe.append(bombeloader["bombe2"][1])
+    if bombeloader["bombe3"][0]!="n":
+        activebombe.append(bombeloader["bombe3"][0])
+        activebombe.append(bombeloader["bombe3"][1])
+    if bombeloader["bombe4"][0]!="n":
+        activebombe.append(bombeloader["bombe4"][0])
+        activebombe.append(bombeloader["bombe4"][1])
+    print("BOMBE ACTIVE:  ",activebombe)
 
+    for posbombes in activebombe:
+        grille[posbombes]="\t  ✸  \t"
+        for i in range(1,10):
+            if activebombe[1]>=i:
+                grille[posbombes-10]="\t  ✸  \t"
+                grille[posbombes+10]="\t  ✸  \t"
+            if activebombe[1]>=i:
+                grille[posbombes-20]="\t  ✸  \t"
+                grille[posbombes+20]="\t  ✸  \t"
+            if activebombe[1]>=i:
+                grille[posbombes-30]="\t  ✸  \t"
+                grille[posbombes+30]="\t  ✸  \t"
+        time.sleep(1)
+        for i in range(1,10):
+            if activebombe[1]>=i:
+                grille[posbombes-10]=casevide
+                grille[posbombes+10]=casevide
+            if activebombe[1]>=i:
+                grille[posbombes-20]=casevide
+                grille[posbombes+20]=casevide
+            if activebombe[1]>=i:
+                grille[posbombes-30]=casevide
+                grille[posbombes+30]=casevide
+    showGameBoard(grille,message)
+'''
 
+'''
 
-bombeloader={"bombe1":[0,8],"bombe2":[0,6],"bombe3":[0,4],"bombe4":[0,2]} #bombe:[position,puissance]
+bombeloader={"bombe1":["n",8],"bombe2":["n",6],"bombe3":["n",4],"bombe4":["n",2]} #bombe:[position,puissance]
 #mouvement={"oldpos":random.randint(0,99),"newpos":0,"typedeplacement":"n","continuer":1}
 
 
@@ -446,7 +487,7 @@ showGameBoard(grille,message)
 
 bombe=0 #experimental attention
 while bombe==0:
-
+    boom(bombeloader)
     while mouvement[3]==1:
         mouvement,bombeloader=movejoueur(mouvement)
     randommovevirus(virus)
