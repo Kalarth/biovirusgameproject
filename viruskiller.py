@@ -26,14 +26,14 @@ casejoueur=VERT+"\t (•ิ_•ิ)\t"+BLANC
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
 
 casebomb=""+JAUNE+"\t(ϟ)\t"+BLANC
-casestamina=BLEU+"\t ( ϟ ) \t"+BLANC
+caseATP=BLEU+"\t ( ϟ ) \t"+BLANC
 casemurver="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 casemurhor="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 
 #grille
 grille=[ROUGE+"\t   .   \t"+BLANC]*100
 virus=[]
-stamina=[]
+ATP=[]
 
 
 def sautdeligne():
@@ -53,7 +53,7 @@ def showGameBoard(grille,message):
     'BOMBE2':VERT+'  Bombe 2'+BLANC+'   PUISSANCE:  '+BLEU+str(bombeloader["bombe2"][1])+BLANC,
     'BOMBE3':VERT+'  Bombe 3'+BLANC+'   PUISSANCE:  '+BLEU+str(bombeloader["bombe3"][1])+BLANC,
     'BOMBE4':VERT+'  Bombe 4'+BLANC+'   PUISSANCE:  '+BLEU+str(bombeloader["bombe4"][1])+BLANC,
-    'STAMINA':VERT+'',
+    'ATP':VERT+'',
     'sample':" ",
     }
 
@@ -134,20 +134,42 @@ def initjoueur():
     joueur=mouvement[1]
     grille[joueur]=casejoueur
 
-def initstamina(stamina):
-    stamina=random.sample(range(0,99),4) #list of 4 different number
-    while grille[stamina[0]]!=casevide or grille[stamina[1]]!=casevide or grille[stamina[2]]!=casevide or grille[stamina[3]]!=casevide: #Generation de virus en dehors des parois
-            stamina=random.sample(range(0,99),4)
-    stamina1=stamina[0]
-    stamina2=stamina[1]
-    stamina3=stamina[2]
-    stamina4=stamina[3]
-    print ("stamina: ",ROUGE,stamina1,stamina2,stamina3,stamina4,BLANC+"\n")
-    grille[stamina1]=casestamina
-    grille[stamina2]=casestamina
-    grille[stamina4]=casestamina
-    grille[stamina3]=casestamina
-    return stamina
+'''
+def initATP(ATP):
+    ATP=random.sample(range(0,99),8) #list of 4 different number
+    for j in range(len(ATP)):
+        print(j)
+        while grille[ATP[j]]!=casevide:
+            #Generation de virus en dehors des parois
+            ATP[j]=random.randint(0,99)
+
+    for i in range(len(ATP)):
+        grille[ATP[i]]=caseATP
+    return ATP
+'''
+
+def countATP():
+    nbATP=0
+    for i in range(len(grille)):
+        if grille[i]==caseATP:
+            nbATP=nbATP+1
+    return nbATP
+
+def randomATP():
+    randomATPpos=random.randint(0,99)
+    while grille[randomATPpos]!=casevide:
+        randomATPpos=random.randint(0,99)
+    return randomATPpos
+
+def spawnATP():
+    nbATP=countATP()
+    while nbATP<8:
+        newATP=randomATP()
+        print(newATP)
+        grille[newATP]=caseATP
+        nbATP=countATP()
+    showGameBoard(grille,message)
+    return grille
 
 
 def keyinput(mouvement):
@@ -246,7 +268,7 @@ def movejoueur(mouvement):
             return mouvement,bombeloader
 
         if newpos != oldpos:
-            if  newpos<0 or newpos>=100 or grille[newpos] not in [casevide,casestamina] or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
+            if  newpos<0 or newpos>=100 or grille[newpos] not in [casevide,caseATP] or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
                 #Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
                 message="Vous ne pouvez pas avancer dans cette direction"
                 showGameBoard(grille,message)
@@ -269,7 +291,7 @@ def movejoueur(mouvement):
                 #print (mouvement)
                 return mouvement,bombeloader
 
-            if grille[newpos] == casestamina: #test si on va sur une case vide
+            if grille[newpos] == caseATP: #test si on va sur une case vide
                 if grille[oldpos]==casejoueurbomb: #TEST DE CASE BOMBE
                     grille[oldpos]=casebomb
                 else:
@@ -315,6 +337,12 @@ def movejoueur(mouvement):
                 showGameBoard(grille,message)
                 return mouvement,bombeloader
 
+def countvirus():
+    nbvirus=0
+    for i in range(len(grille)):
+        if grille[i]==casevirus:
+            nbvirus=nbvirus+1
+    return nbvirus
 
 def dirpossiblevirus(numvirus):
     posvirus=virus[numvirus]
@@ -400,7 +428,7 @@ def movevirus(numvirus,dirvalue):
 
                 message="Les virus se déplacent"
                 #print ("j'ai bougé normalement")
-                time.sleep(0.5)
+                time.sleep(0.3)
                 showGameBoard(grille,message)
 
             else:
@@ -414,11 +442,11 @@ def movevirus(numvirus,dirvalue):
 
 
 def boostbombe(bombeloader):
-    bombeloader["bombe1"][1]=bombeloader["bombe1"][1]+1
-    bombeloader["bombe2"][1]=bombeloader["bombe2"][1]+1
-    bombeloader["bombe3"][1]=bombeloader["bombe3"][1]+1
-    bombeloader["bombe4"][1]=bombeloader["bombe4"][1]+1
-    print ("BOUUUUUMMMM")
+    i=0
+    while i < 2:
+        selectrandombombe=random.choice(list(bombeloader.keys()))
+        bombeloader[selectrandombombe][1]=bombeloader[selectrandombombe][1]+1
+        i=i+1
     return bombeloader
 
 def boom(bombeloader):
@@ -426,48 +454,64 @@ def boom(bombeloader):
     if bombeloader["bombe1"][0]!="n":
         activebombe.append(bombeloader["bombe1"][0])
         activebombe.append(bombeloader["bombe1"][1])
+        bombeloader["bombe1"][1]="X"
     if bombeloader["bombe2"][0]!="n":
         activebombe.append(bombeloader["bombe2"][0])
         activebombe.append(bombeloader["bombe2"][1])
+        bombeloader["bombe2"][1]="X"
     if bombeloader["bombe3"][0]!="n":
         activebombe.append(bombeloader["bombe3"][0])
         activebombe.append(bombeloader["bombe3"][1])
+        bombeloader["bombe3"][1]="X"
     if bombeloader["bombe4"][0]!="n":
         activebombe.append(bombeloader["bombe4"][0])
         activebombe.append(bombeloader["bombe4"][1])
+        bombeloader["bombe4"][1]="X"
     print("BOMBE ACTIVE:  ",activebombe)
 
-    for posbombes in activebombe:
-        grille[posbombes]="\t  ✸  \t"
-        for i in range(1,10):
-            if activebombe[1]>=i:
-                grille[posbombes-10]="\t  ✸  \t"
-                grille[posbombes+10]="\t  ✸  \t"
-            if activebombe[1]>=i:
-                grille[posbombes-20]="\t  ✸  \t"
-                grille[posbombes+20]="\t  ✸  \t"
-            if activebombe[1]>=i:
-                grille[posbombes-30]="\t  ✸  \t"
-                grille[posbombes+30]="\t  ✸  \t"
-        time.sleep(1)
-        for i in range(1,10):
-            if activebombe[1]>=i:
-                grille[posbombes-10]=casevide
-                grille[posbombes+10]=casevide
-            if activebombe[1]>=i:
-                grille[posbombes-20]=casevide
-                grille[posbombes+20]=casevide
-            if activebombe[1]>=i:
-                grille[posbombes-30]=casevide
-                grille[posbombes+30]=casevide
-    showGameBoard(grille,message)
-'''
+    if activebombe!=[]:
+        posbombes=activebombe[0]
+        rayon=int(activebombe[1]/2)+ (activebombe[1] % 2 > 0)
+        print (rayon)
+        grille[posbombes]=ROUGE+"\t  ✸  \t"+BLANC
+        i=1
+        while i <= rayon:
+            message=str(i)
+            if posbombes-10*i >= 0:
+                grille[posbombes-10*i]="\t  ✸  \t"
+            if posbombes+10*i < 99:
+                grille[posbombes+10*i]="\t  ✸  \t"
+            i=i+1
+        showGameBoard(grille,message)
+        time.sleep(2)
+        grille[posbombes]=casevide
+        k=1
+        while k <= rayon:
+            if posbombes-10*k >= 0:
+                grille[posbombes-10*k]=casevide
+            if posbombes+10*k < 99:
+                grille[posbombes+10*k]=casevide
+            k=k+1
+        showGameBoard(grille,message)
+        for item in bombeloader.keys():
+            bombeloader[item][0]="n"
+        return bombeloader
 
-'''
+def reloadbombe(bombeloader):
+    for slot in bombeloader.keys():
+        if bombeloader[slot][1]=="X":
+            val =random.sample([3,5,7,9],1)
+            bombeloader[slot][1]=val[0]
+
+def bombemolle(bombeloader):
+    for slot in bombeloader.keys():
+        print("bombeloader[slot][1]",bombeloader[slot][1])
+        bombeloader[slot][1]=bombeloader[slot][1]-1
+    print(bombeloader)
+    showGameBoard(grille,message)
+    return bombeloader
 
 bombeloader={"bombe1":["n",8],"bombe2":["n",6],"bombe3":["n",4],"bombe4":["n",2]} #bombe:[position,puissance]
-#mouvement={"oldpos":random.randint(0,99),"newpos":0,"typedeplacement":"n","continuer":1}
-
 
 #MAIN
 
@@ -481,15 +525,19 @@ message=" Début du jeu"
 initmurs()
 initjoueur()
 virus=initvirus(virus)
-stamina=initstamina(stamina)
+nbvirus=countvirus()
+spawnATP()
 showGameBoard(grille,message)
 
 
 bombe=0 #experimental attention
-while bombe==0:
-    boom(bombeloader)
+while bombe==0 or nbvirus!=0:
     while mouvement[3]==1:
         mouvement,bombeloader=movejoueur(mouvement)
     randommovevirus(virus)
+    boom(bombeloader)
+    spawnATP()
+    reloadbombe(bombeloader)
+    bombemolle(bombeloader)
     mouvement[2]="n"
     mouvement[3]=1
