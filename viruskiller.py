@@ -24,16 +24,19 @@ casevirus=ROUGE+"\t (◣_◢) \t"+BLANC
 casevide=ROUGE+"\t   .   \t"+BLANC
 casejoueur=VERT+"\t (•ิ_•ิ)\t"+BLANC
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
-
-casebomb=""+JAUNE+"\t(ϟ)\t"+BLANC
+casebomb=""+JAUNE+"\t 💣 \t"+BLANC
 caseATP=BLEU+"\t ( ϟ ) \t"+BLANC
 casemurver="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 casemurhor="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 
-#grille
+
 grille=[ROUGE+"\t   .   \t"+BLANC]*100
 virus=[]
 ATP=[]
+
+bombeloader={"bombe1":["n",8],"bombe2":["n",6],"bombe3":["n",4],"bombe4":["n",2]} #bombe:[position,puissance]
+mouvement=[0,random.randint(0,99),"n",1]
+message=" Début du jeu"
 
 
 def sautdeligne():
@@ -337,14 +340,8 @@ def movejoueur(mouvement):
                 showGameBoard(grille,message)
                 return mouvement,bombeloader
 
-def countvirus():
-    nbvirus=0
-    for i in range(len(grille)):
-        if grille[i]==casevirus:
-            nbvirus=nbvirus+1
-    return nbvirus
 
-def dirpossiblevirus(numvirus):
+def dirpossiblevirus(virus,numvirus):
     posvirus=virus[numvirus]
     dirpossible=[]
 
@@ -368,46 +365,47 @@ def dirpossiblevirus(numvirus):
 
 def randommovevirus(virus):
     for numvirus in range(len(virus)):
-        oldvirpos=virus[numvirus]
-        #test des cases alentours pour choisir une direction où le virus ne sera pas bloqué
-        dirpossible=dirpossiblevirus(numvirus)
-        direction=random.choice(dirpossible)
-        j=0
-        if direction==0: #haut
-            dirvalue=-10
-            maxdistance=int(oldvirpos/10)+ (oldvirpos % 10 > 0)
-            distance=random.randint(1,maxdistance)#distance a parcourir
-            while j < distance:
-                movevirus(numvirus,dirvalue)
-                j=j+1
+        if virus[numvirus]!="mort":
+            oldvirpos=virus[numvirus]
+            #test des cases alentours pour choisir une direction où le virus ne sera pas bloqué
+            dirpossible=dirpossiblevirus(virus,numvirus)
+            direction=random.choice(dirpossible)
+            j=0
+            if direction==0: #haut
+                dirvalue=-10
+                maxdistance=int(oldvirpos/10)+ (oldvirpos % 10 > 0)
+                distance=random.randint(1,maxdistance)#distance a parcourir
+                while j < distance:
+                    movevirus(virus,numvirus,dirvalue)
+                    j=j+1
 
-        if direction==1: #bas
-            dirvalue=10
-            maxdistance=10- int(oldvirpos/10)+ (oldvirpos % 10 > 0) # oldvirpos % 10 > 0 return 1 si true -> donc ajoute 1 si il y a un reste
-            distance=random.randint(1,maxdistance)#distance a parcourir
-            while j < distance:
-                movevirus(numvirus,dirvalue)
-                j=j+1
+            if direction==1: #bas
+                dirvalue=10
+                maxdistance=10- int(oldvirpos/10)+ (oldvirpos % 10 > 0) # oldvirpos % 10 > 0 return 1 si true -> donc ajoute 1 si il y a un reste
+                distance=random.randint(1,maxdistance)#distance a parcourir
+                while j < distance:
+                    movevirus(virus,numvirus,dirvalue)
+                    j=j+1
 
-        if direction==2: #gauche
-            dirvalue=-1
-            maxdistance=oldvirpos % 10 +1
-            distance=random.randint(1,maxdistance)#distance a parcourir
-            while j < distance:
-                movevirus(numvirus,dirvalue)
-                j=j+1
-
-
-        if direction==3: #gauche
-            dirvalue=+1
-            maxdistance=10-(oldvirpos % 10)
-            distance=random.randint(1,maxdistance)#distance a parcourir
-            while j < distance:
-                movevirus(numvirus,dirvalue)
-                j=j+1
+            if direction==2: #gauche
+                dirvalue=-1
+                maxdistance=oldvirpos % 10 +1
+                distance=random.randint(1,maxdistance)#distance a parcourir
+                while j < distance:
+                    movevirus(virus,numvirus,dirvalue)
+                    j=j+1
 
 
-def movevirus(numvirus,dirvalue):
+            if direction==3: #gauche
+                dirvalue=+1
+                maxdistance=10-(oldvirpos % 10)
+                distance=random.randint(1,maxdistance)#distance a parcourir
+                while j < distance:
+                    movevirus(virus,numvirus,dirvalue)
+                    j=j+1
+
+
+def movevirus(virus,numvirus,dirvalue):
     oldvirpos=virus[numvirus]
     #print ("OLDVIRPOS=",oldvirpos)
     newposvir=oldvirpos+dirvalue #test de la case cible
@@ -482,6 +480,7 @@ def boom(bombeloader):
             if posbombes+10*i < 99:
                 grille[posbombes+10*i]="\t  ✸  \t"
             i=i+1
+        message="BOOOOM"
         showGameBoard(grille,message)
         time.sleep(2)
         grille[posbombes]=casevide
@@ -511,33 +510,96 @@ def bombemolle(bombeloader):
     showGameBoard(grille,message)
     return bombeloader
 
-bombeloader={"bombe1":["n",8],"bombe2":["n",6],"bombe3":["n",4],"bombe4":["n",2]} #bombe:[position,puissance]
+def constatdesmorts(virus):
+    for individus in range(0,4):
+        if virus[individus]!="mort":
+            if grille[virus[individus]]==casevide:
+                virus[individus]="mort"
+        print (virus)
+    return virus
 
-#MAIN
+def win(virus):
+    victory=0
+    nbmort=virus.count("mort")
+    if nbmort==4:
+        victory=1
+        os.system('clear')
+        print ("WIN!!!!")
+    return victory
 
-print (ORANGE + "DEBUT DU PROGRAMME (en couleur)","\n"+ BLANC)
+def loose(bombeloader):
+    rip=0
+    bombezero=0
+    for item in bombeloader.keys():
+        if bombeloader[item][1]<=0:
+            bombezero=bombezero+1
 
-mouvement=[0,random.randint(0,99),"n",1]
-#print (mouvement)
-
-message=" Début du jeu"
-
-initmurs()
-initjoueur()
-virus=initvirus(virus)
-nbvirus=countvirus()
-spawnATP()
-showGameBoard(grille,message)
+    if bombezero==4:
+        rip=1
+        os.system('clear')
+        print ("PERDU!!!!")
+    return rip
 
 
-bombe=0 #experimental attention
-while bombe==0 or nbvirus!=0:
-    while mouvement[3]==1:
-        mouvement,bombeloader=movejoueur(mouvement)
-    randommovevirus(virus)
-    boom(bombeloader)
+def startgame(virus,mouvement,grille,message,bombeloader,ATP):
+    initmurs()
+    initjoueur()
+    virus=initvirus(virus)
     spawnATP()
-    reloadbombe(bombeloader)
-    bombemolle(bombeloader)
-    mouvement[2]="n"
-    mouvement[3]=1
+    showGameBoard(grille,message)
+    victory=win(virus)
+    rip=loose(bombeloader)
+
+    while victory==0 and rip==0:
+        while mouvement[3]==1:
+            mouvement,bombeloader=movejoueur(mouvement)
+        randommovevirus(virus)
+        boom(bombeloader)
+        virus=constatdesmorts(virus)
+        spawnATP()
+        reloadbombe(bombeloader)
+        bombemolle(bombeloader)
+        victory=win(virus)
+        rip=loose(bombeloader)
+        mouvement[2]="n"
+        mouvement[3]=1
+
+iconbombe="""
+                        . . .
+                         \|/
+                       `--+--'
+                         /|\\
+                        ' | '
+                          |
+                          |
+                      ,--'#`--.
+                      |#######|
+                   _.-'#######`-._              \t /██    /██ /██                                     /██   /██ /██ /██ /██
+                ,-'###############`-.           \t| ██   | ██|__/                                    | ██  /██/|__/| ██| ██
+              ,'#####################`,         \t| ██   | ██ /██  /██████  /██   /██  /███████      | ██ /██/  /██| ██| ██  /██████   /██████
+             /#########################|        \t|  ██ / ██/| ██ /██__  ██| ██  | ██ /██_____/      | █████/  | ██| ██| ██ /██__  ██ /██__  ██
+            |###########################|       \t \  ██ ██/ | ██| ██  \__/| ██  | ██|  ██████       | ██  ██  | ██| ██| ██| ████████| ██  \__/
+           |#############################|      \t  \  ███/  | ██| ██      | ██  | ██ \____  ██      | ██\  ██ | ██| ██| ██| ██_____/| ██
+           |#############################|      \t   \  █/   | ██| ██      |  ██████/ /███████/      | ██ \  ██| ██| ██| ██|  ███████| ██
+           |#############################|      \t    \_/    |__/|__/       \______/ |_______/       |__/  \__/|__/|__/|__/ \_______/|__/
+           |#############################|
+            |###########################|
+             \#########################/
+              `.#####################,'
+                `._###############_,'
+                   `--..#####..--'
+"""
+
+
+def menu():
+    print (BLEU+iconbombe+BLANC)
+    time.sleep(2)
+    print("""
+    \n  [1] JOUER
+    \n  [2] INSTRUCTIONS
+    \n  [3] CREDITS
+    \n  [0] QUITTER
+    """)
+
+menu()
+startgame(virus,mouvement,grille,message,bombeloader,ATP)
