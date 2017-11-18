@@ -28,7 +28,7 @@ casevide=ROUGE+"\t   .   \t"+BLANC
 casejoueur=VERT+"\t【•◡•】\t"+BLANC
 
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
-casebomb=""+JAUNE+"\t 💣 \t"+BLANC
+casebomb=""+JAUNE+"\t  💣 \t"+BLANC
 caseATP=BLEU+"\t ( ϟ ) \t"+BLANC
 casemurver="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
 casemurhor="\t  "+"\033[0;33;43m"+" ⬛"+BLANC+"\t"
@@ -631,6 +631,11 @@ def boom(bombeloader):
                 grille[posbombes-10*i]="\t  ✸  \t"
             if posbombes+10*i < 99:
                 grille[posbombes+10*i]="\t  ✸  \t"
+            if rayon<=2: # Explosion en croix pour les bombes de puissance <= 2
+                if posbombes-1*i >= 0 and (posbombes-1*i)%10!=9:
+                    grille[posbombes-1*i]="\t  ✸  \t"
+                if posbombes+1*i < 99 and (posbombes+1*i)%10!=0:
+                    grille[posbombes+1*i]="\t  ✸  \t"
             i=i+1
         message="BOOOOM"+JAUNE+"\t\t\t\t\t█"+BLANC
         showGameBoard(grille,message)
@@ -642,6 +647,11 @@ def boom(bombeloader):
                 grille[posbombes-10*k]=casevide
             if posbombes+10*k < 99:
                 grille[posbombes+10*k]=casevide
+            if rayon<=2: # Explosion en croix pour les bombes de puissance <= 2
+                if posbombes-1*k >= 0 and (posbombes-1*k)%10!=9:
+                    grille[posbombes-1*i]=casevide
+                if posbombes+1*k < 99 and (posbombes+1*k)%10!=0:
+                    grille[posbombes+1*i]=casevide
             k=k+1
         showGameBoard(grille,message)
         for item in bombeloader.keys():
