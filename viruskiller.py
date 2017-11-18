@@ -506,7 +506,8 @@ def reloadbombe(bombeloader):
 def bombemolle(bombeloader):
     for slot in bombeloader.keys():
         print("bombeloader[slot][1]",bombeloader[slot][1])
-        bombeloader[slot][1]=bombeloader[slot][1]-1
+        if bombeloader[slot][1]!=0: #Les bombes peuvent pas etre négative yo
+            bombeloader[slot][1]=bombeloader[slot][1]-1
     print(bombeloader)
     showGameBoard(grille,message)
     return bombeloader
