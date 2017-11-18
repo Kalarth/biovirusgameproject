@@ -620,6 +620,8 @@ iconbombe="""
                 `._###############_,'
                    `--..#####..--'
 """
+
+
 iconmenu="""
 \t\t\t\t\t\t\t\t   _                _
 \t\t\t\t\t\t\t\t /  |              | |   ___    _   _    ___   _ __
@@ -637,7 +639,29 @@ iconmenu="""
 \t\t\t\t\t\t\t\t | |_| |  _    | |_| | | |_| | | | | |_  | |_  |  __/ | |
 \t\t\t\t\t\t\t\t  \___/  (_)    \__\_\  \__,_| |_|  \__|  \__|  \___| |_|
 """
+def lore():
+    print(BLANC+"""\n\n       Unité 13,\n
+       C'est le moment de mettre vos nerfs à rude épreuve.                                                                                     \\\ /////
+       Vos derniers exploits dans la bataille contre ce satané R-HuM, sont célèbres dans le corps entier.                                      |     '|
+       Plusieurs virus non-identifiés ont fait irruption dans des cellules. Ils sont extrêmement dangereux.                                   (| _  _ |)
+       En effet de par leurs déplacements totalement aléatoire, ils sont difficilement atteignables et particulièrement irritants.             |` |   |
+       Ils sont de plus capables de déclencher des stress cellulaires provoquant une érruption de réactions comme : """+BLANC+"\t\t               |  __  |")
+    print("\t\t  - "+ROUGE+"NameError Traceback (most recent call last)"+BLANC+"\t\t\t\t\t\t\t\t\t         >>>___/\_^__/\___<<<")
+    print("\t\t  - "+ROUGE+"IndexError: index out of range"+BLANC+"\t\t\t\t\t\t\t\t\t\t        /               |||  \\ \n")
+    print("""       ... vous obligeant à revenir sur le menu et relancer une partie. Mais si les virus sont calmes ça ne devrait pas arriver.\n
+       Unité 13... Bonne Chance""")
 
+
+"""
+       \\ /////
+       |      |
+      (| _  _ |)
+       |` |  '|
+       |  __  |
+ >>>___/\_^__/\___<<<
+/               |||  \
+
+"""
 def credit():
     pierrotpaul="""
 \n\n\n
@@ -673,17 +697,6 @@ def credit():
 
 def instructions():
     os.system('clear')
-    print(BLANC+"""\n\n     Unité 13,\n
-     C'est le moment de mettre vos nerfs à rude épreuve.
-     Vos derniers exploits dans la bataille contre ce satané R-HuM, sont célèbres dans le corps entier.
-     Plusieurs virus non-identifiés ont fait irruption dans des cellules. Ils sont extrêmement dangereux.
-     En effet de par leurs déplacements totalement aléatoire, ils sont difficilement atteignables et particulièrement irritants.
-     Ils sont de plus capables de déclencher des stress cellulaires provoquant une érruption de réactions comme : \n"""+BLANC)
-    print("\t\t- "+ROUGE+"NameError Traceback (most recent call last)"+BLANC)
-    print("\t\t- "+ROUGE+"IndexError: index out of range\n"+BLANC)
-    print("""     ... vous obligeant à revenir sur le menu et relancer une partie. Mais si les virus sont calmes ça ne devrait pas arriver.\n
-     Laissez moi vous rappeler les règles de base ici.
-    """)
     print (BLEU+"""
                             HAUT                                     BOMBE 1               BOMBE 2              BOMBE 3              BOMBE 4
                       .----------------.                        .----------------.   .----------------.   .----------------.   .----------------.
@@ -721,16 +734,20 @@ def instructions():
     |     - Poser de bombe après déplacement                                                                          |
     |     - Vous déplacer verticalement après vous être déplacés horizontalement et réciproquement                    |
     |     - Passer les parois cellulaires                                                                             |
-    '-----------------------------------------------------------------------------------------------------------------'
-    """)
-    input(BLANC+"     Appuyer sur entrer pour continuer... ")
+    '-----------------------------------------------------------------------------------------------------------------' """+BLANC)
+    input('     Appuyer sur entrer pour continuer... ')
     menu()
 
 def menu():
-    os.system('clear')
+    os.system("clear")
+    print (JAUNE+iconbombe+BLANC)
+    lore()
+    time.sleep(1)
+    input(ORANGE+"\n\n    Appuyer sur ENTRER pour continuer..."+BLANC)
+    os.system("clear")
     print (JAUNE+iconbombe+BLANC)
     print (VIOLET+iconmenu+BLANC)
-    selection=input(VIOLET+"\n\n\t\t\t\t\t\t\t\t Choix: "+BLANC)
+    selection = input("\n\n\t\t\t\t\t\t\t\t Choix: ")
     if selection=="1":
         startgame(virus,mouvement,grille,message,bombeloader,ATP)
     if selection=="2":
