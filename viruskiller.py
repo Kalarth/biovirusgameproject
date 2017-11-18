@@ -25,7 +25,7 @@ JAUNE="\033[33m"
 #type de case
 casevirus=ROUGE+"\t (◣_◢) \t"+BLANC
 casevide=ROUGE+"\t   .   \t"+BLANC
-casejoueur=VERT+"\t 【•◡•】 \t"+BLANC
+casejoueur=VERT+"\t【•◡•】\t"+BLANC
 
 casejoueurbomb=ORANGE+"\t(■_■)☢\t"+BLANC
 casebomb=""+JAUNE+"\t 💣 \t"+BLANC
@@ -188,14 +188,14 @@ ATP=[]
 
 bombeloader={"bombe1":["n",8],"bombe2":["n",6],"bombe3":["n",4],"bombe4":["n",2]} #bombe:[position,puissance]
 mouvement=[0,random.randint(0,99),"n",1]
-message="Tours de Jeu"+JAUNE+"\t\t\t\t\t█"+BLANC
+message="Tours de Jeu"+JAUNE+"\t\t\t\t█"+BLANC
 
 
 def sautdeligne():
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
 
 def lore():
     print(BLANC+"""\n\n       Unité 13,\n
@@ -217,12 +217,13 @@ def instructions():
     os.system('clear')
     print(regles)
     print (keyboard)
+    input("\n\n  Appuyer sur ENTRER pour revenir au menu...")
 
 
 def showGameBoard(grille,message):
     os.system('clear')
-    barrehaute="\n"+(JAUNE+"█"+BLANC)*217
-    barrebasse=(JAUNE+"█"+BLANC)*217
+    barrehaute="\n"+(JAUNE+"█"+BLANC)*209
+    barrebasse=(JAUNE+"█"+BLANC)*209
 
     UI={'Titre':'  VIRUS KILLER',
     'BOMBE1':VERT+'  Bombe 1'+BLEU+'   PUISSANCE:  '+str(bombeloader["bombe1"][1])+BLANC,
@@ -235,30 +236,30 @@ def showGameBoard(grille,message):
     }
 
     print (barrehaute)
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
-    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
+    print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+"\t\t\t\t\t\t█"+BLANC)
     for i in range(0,100):
         if i%10==0:
             print (JAUNE+"█"+BLANC,end="")
         print (grille[i],end='')
 
         if i==9:
-            print (JAUNE+"█"+BLANC,UI["Titre"],JAUNE+"\t\t\t\t\t█"+BLANC)
+            print (JAUNE+"█"+BLANC,UI["Titre"],JAUNE+"\t\t\t\t█"+BLANC)
             sautdeligne()
         if i==19:
-            print (JAUNE+"█"+"\t\t\t\t\t\t\t█"+BLANC)
-            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE1"],JAUNE+"\t\t\t\t█"+BLANC)
-            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE2"],JAUNE+"\t\t\t\t█"+BLANC)
-            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE3"],JAUNE+"\t\t\t\t█"+BLANC)
-            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE4"],JAUNE+"\t\t\t\t█"+BLANC)
+            print (JAUNE+"█"+"\t\t\t\t\t\t█"+BLANC)
+            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE1"],JAUNE+"\t\t\t█"+BLANC)
+            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE2"],JAUNE+"\t\t\t█"+BLANC)
+            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE3"],JAUNE+"\t\t\t█"+BLANC)
+            print (JAUNE+"█\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t█"+BLANC,UI["BOMBE4"],JAUNE+"\t\t\t█"+BLANC)
         if i==39:
-            print (JAUNE+"█"+VERT,"  Virus restant: ",UI["VIRUSRESTANT"],JAUNE+"\t\t\t\t█"+BLANC)
+            print (JAUNE+"█"+VERT,"  Virus restant: ",UI["VIRUSRESTANT"],JAUNE+"\t\t\t█"+BLANC)
             sautdeligne()
         if i==49:
             print (JAUNE+"█"+BLANC,"  "+message)
             sautdeligne()
         if i%10==9 and i not in [9,19,39,49]:
-            print (JAUNE+"█"+"\t\t\t\t\t\t\t█"+BLANC)
+            print (JAUNE+"█"+"\t\t\t\t\t\t█"+BLANC)
             sautdeligne()
 
     print (barrebasse)
@@ -304,20 +305,6 @@ def initjoueur():
     joueur=mouvement[1]
     grille[joueur]=casejoueur
 
-'''
-def initATP(ATP):
-    ATP=random.sample(range(0,99),8) #list of 4 different number
-    for j in range(len(ATP)):
-        print(j)
-        while grille[ATP[j]]!=casevide:
-            #Generation de virus en dehors des parois
-            ATP[j]=random.randint(0,99)
-
-    for i in range(len(ATP)):
-        grille[ATP[i]]=caseATP
-    return ATP
-'''
-
 def countATP():
     nbATP=0
     for i in range(len(grille)):
@@ -347,7 +334,7 @@ def keyinput(mouvement):
     oldpos=mouvement[1]
     voh=mouvement[2] #vertical ou horizontal ou none
 
-    inputkey=input("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Saisissez votre direction:  ")
+    inputkey=input("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Action :  ")
     if inputkey=="z" and (voh=="v" or voh=="n"):  #aller vers le haut si on s'est déplacé verticalement ou pas déplacé
         newpos=oldpos-10
         voh="v" #vertical ou horizontal
@@ -440,7 +427,7 @@ def movejoueur(mouvement):
         if newpos != oldpos:
             if  newpos<0 or newpos>=100 or grille[newpos] not in [casevide,caseATP] or (oldpos%10==9 and newpos%10==0) or (oldpos%10==0 and newpos%10==9):
                 #Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
-                message="Vous ne pouvez pas avancer dans cette direction"+JAUNE+"\t█"+BLANC
+                message="Vous ne pouvez pas aller là"+JAUNE+"\t\t\t█"+BLANC
                 showGameBoard(grille,message)
                 #print ("Vous ne pouvez pas avancer dans cette direction")
                 #print (mouvement)
@@ -455,7 +442,7 @@ def movejoueur(mouvement):
                 grille[newpos]=casejoueur
                 mouvement=[oldpos,newpos,voh,continuer]
 
-                message="Vous avancez"+JAUNE+"\t\t\t\t\t█"+BLANC
+                message="Vous avancez"+JAUNE+"\t\t\t\t█"+BLANC
                 showGameBoard(grille,message)
 
                 #print (mouvement)
@@ -469,7 +456,7 @@ def movejoueur(mouvement):
                 grille[newpos]=casejoueur
                 mouvement=[oldpos,newpos,voh,continuer]
 
-                message="Vous avancez"+JAUNE+"\t\t\t\t\t█"+BLANC
+                message="Vous avancez"+JAUNE+"\t\t\t\t█"+BLANC
                 boostbombe(bombeloader)
                 showGameBoard(grille,message)
                 #print (mouvement)
@@ -478,14 +465,14 @@ def movejoueur(mouvement):
 
         if (newpos == oldpos and voh!="n"):
             grille[newpos]=casejoueur
-            message="Bombes inaccessible après déplacement"+JAUNE+"\t\t█"+BLANC
+            message="Bombes inaccessible après déplacement"+JAUNE+"\t█"+BLANC
             showGameBoard(grille,message)
             return mouvement,bombeloader
 
 
         if (newpos == oldpos and voh=="n"):
             grille[newpos]=casejoueurbomb
-            tabulationbomb=JAUNE+"\t\t\t█"+BLANC
+            tabulationbomb=JAUNE+"\t\t█"+BLANC
             print ("INPUT=",inputkey)
             if inputkey=="1":
                 bombeloader["bombe1"][0]=newpos
@@ -578,11 +565,11 @@ def movevirus(virus,numvirus,dirvalue):
     #print ("OLDVIRPOS=",oldvirpos)
     newposvir=oldvirpos+dirvalue #test de la case cible
     #print ("TESTMOVEVIRUS=",newposvir)
-    message="Les virus se déplacent"+JAUNE+"\t\t\t\t█"+BLANC
+    message="Les virus se déplacent"+JAUNE+"\t\t\t█"+BLANC
     if (newposvir > 0 and newposvir < 100):
         if (oldvirpos%10==9 and newposvir%10==0) or (oldvirpos%10==0 and newposvir%10==9):
             #print("ON PEUT PAS TRAVERSER LES MURS T'ES FOU")
-            message="Le virus tente en vain de passer la paroi"+JAUNE+"\t\t█"+BLANC
+            message="Le virus tente en vain de passer la paroi"+JAUNE+"\t█"+BLANC
             time.sleep(0.3)
             showGameBoard(grille,message)
         else:
@@ -645,7 +632,7 @@ def boom(bombeloader):
             if posbombes+10*i < 99:
                 grille[posbombes+10*i]="\t  ✸  \t"
             i=i+1
-        message="BOOOOM"+JAUNE+"\t\t\t\t\t\t█"+BLANC
+        message="BOOOOM"+JAUNE+"\t\t\t\t\t█"+BLANC
         showGameBoard(grille,message)
         time.sleep(2)
         grille[posbombes]=casevide
@@ -756,6 +743,5 @@ def menu():
     else:
         menu()
 
-startgame(virus,mouvement,grille,message,bombeloader,ATP)
 credit()
 menu()
