@@ -21,6 +21,9 @@ GRAS = '\033[1m'
 SOULIGNE = '\033[4m'
 JAUNE = "\033[33m"
 
+CURSOR_UP_ONE = '\x1b[1A'
+ERASE_LINE = '\x1b[2K'
+
 # type de case a print dans la grille
 casevirus = ROUGE + "\t (◣_◢) \t" + BLANC
 casevide = ROUGE + "\t   .   \t" + BLANC
@@ -314,12 +317,12 @@ def randomingrille(n1,n2):
         value=random.randint(n1,n2)
     return value
 
-# Renvoie true si la valeur testée ne sort pas de la grille ou ne reviens pas par l'autre coté
-def passepasmuraille(oldpos,newpos):
+# Renvoie true si la valeur testée sort de la grille ou reviens par l'autre coté
+def passemuraille(oldpos,newpos):
     if (newpos < 0 or newpos > 99 or (oldpos % 10 == 9 and newpos % 10 == 0) or (oldpos % 10 == 0 and newpos % 10 == 9) ):
-        return False
-    else:
         return True
+    else:
+        return False
 
 # Initialisation des murs, choix de la difficulté (nombre et longueur des murs), sens aléatoire.
 def initmurs():
@@ -347,7 +350,7 @@ def initmurs():
         # On tire une position au hasard sur la grille pourvu que la place soit disponible (avec la fonction randomingrille)
         startingpoint=randomingrille(0,99)
         grille[startingpoint]=casemur
-        # Pour les verticaux on remplie vers le haut. Si l'on sort de la grille (fonction passepasmuraille), on commence à remplir vers le bas.
+        # Pour les verticaux on remplie vers le haut. Si l'on sort de la grille (fonction passemuraille), on commence à remplir vers le bas.
         # On a donc besoin d'avoir des compteurs indépendant pour haut et bas.
         if sensmur==1:
             haut=0
@@ -355,14 +358,14 @@ def initmurs():
             for brique in range(1,longmur):
                 oldpos=startingpoint-10*haut
                 newpos=startingpoint-10*(haut+1)
-                if passepasmuraille(oldpos,newpos) is True:
+                if passemuraille(oldpos,newpos) is False:
                     grille[newpos]=casemur
                     haut=haut+1
 
                 else:
                     oldpos=startingpoint+10*bas
                     newpos=startingpoint+10*(bas+1)
-                    if passepasmuraille(oldpos,newpos) is True:
+                    if passemuraille(oldpos,newpos) is False:
                         grille[newpos]=casemur
                         bas=bas+1
 
@@ -374,14 +377,14 @@ def initmurs():
             for brique in range(1,longmur):
                 oldpos=startingpoint-1*gauche
                 newpos=startingpoint-1*(gauche+1)
-                if passepasmuraille(oldpos,newpos) is True:
+                if passemuraille(oldpos,newpos) is False:
                     grille[newpos]=casemur
                     gauche=gauche+1
 
                 else:
                     oldpos=startingpoint+1*droite
                     newpos=startingpoint+1*(droite+1)
-                    if passepasmuraille(oldpos,newpos) is True:
+                    if passemuraille(oldpos,newpos) is False:
                         grille[newpos]=casemur
                         droite=droite+1
         mur+=1
@@ -406,280 +409,190 @@ def randomATP():
     randomATPpos = randomingrille(0,99)
     return randomATPpos
 
-
+# Génère de l'ATP tant qu'il y a moins de 8 molecules dans la grille.
 def spawnATP():
     nbATP = countATP()
     while nbATP < 8:
         newATP = randomATP()
-        print(newATP)
         grille[newATP] = caseATP
         nbATP = countATP()
     showGameBoard(grille, message)
     return grille
 
-
+# Gestion des touches utilisés par le joueur pendant son tour de jeu.
 def keyinput(mouvement):
+    #newpos et oldpos sont utilisés pour le déplacement, oldpos est conservé si la direction testée (newpos) ne réponds pas aux critères de déplacement
     newpos = mouvement[0]
     oldpos = mouvement[1]
-    voh = mouvement[2]  # vertical ou horizontal ou none
+    voh = mouvement[2]          # vertical ou horizontal ou none
+    continuer = 1               #continuer le déplacement tant que continuer = 1
 
     inputkey = input("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Action :  ")
-    if inputkey == "z" and (voh == "v" or voh == "n"):  # aller vers le haut si on s'est déplacé verticalement ou pas déplacé
-        newpos = oldpos - 10
-        voh = "v"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
+    # aller vers le haut (z) si on s'est déplacé verticalement (v) ou pas encore déplacé (n)
+    if inputkey == "z" and (voh == "v" or voh == "n"):
+        newpos = oldpos - 10    # Pour aller vers le haut on enlève 10 à l'index
+        voh = "v"
 
-    if inputkey == "q" and (voh == "h" or voh == "n"):  # aller vers la gauche si on s'est déplacé horizontalement ou pas déplacé
+    # aller vers la gauche (q) si on s'est déplacé horizontalement (h) ou pas encore déplacé (n)
+    elif inputkey == "q" and (voh == "h" or voh == "n"):
         newpos = oldpos - 1
-        voh = "h"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
+        voh = "h"
 
-    if inputkey == "s" and (voh == "v" or voh == "n"):  # aller vers le bas si on s'est déplacé verticalement ou pas déplacé
+    # aller vers le bas (s) si on s'est déplacé verticalement (v) ou pas encore déplacé (n)
+    elif inputkey == "s" and (voh == "v" or voh == "n"):
         newpos = oldpos + 10
-        voh = "v"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
+        voh = "v"
 
-    if inputkey == "d" and (voh == "h" or voh == "n"):  # aller vers la droite si on s'est déplacé horizontalement ou pas déplacé
+    # aller vers la droite (d) si on s'est déplacé horizontalement (h) ou pas encore déplacé (n)
+    elif inputkey == "d" and (voh == "h" or voh == "n"):
         newpos = oldpos + 1
-        voh = "h"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
+        voh = "h"
 
-    if (inputkey == "1" and voh == "n"):  # poser une bombe si on ne s'est pas déplace
+    # poser une bombe si on ne s'est pas déplacé
+    elif (inputkey in ["1","2","3","4"] and voh == "n"):
         newpos = oldpos
-        voh = "n"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
+        voh = "n"
 
-    if (inputkey == "2" and voh == "n"):  # poser une bombe si on ne s'est pas déplace
+    # empêche la pose de bombe si on s'est déplacé
+    elif (inputkey in ["1","2","3","4"] and voh != "n"):
         newpos = oldpos
-        voh = "n"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
 
-    if (inputkey == "3" and voh == "n"):  # poser une bombe si on ne s'est pas déplace
-        newpos = oldpos
-        voh = "n"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
-
-    if (inputkey == "4" and voh == "n"):  # poser une bombe si on ne s'est pas déplace
-        newpos = oldpos
-        voh = "n"  # vertical ou horizontal
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
-
-    if ((inputkey == "1" or inputkey == "2" or inputkey == "3" or inputkey == "4") and voh != "n"):  # ne pas poser une bombe si on s'est déplacé
-        newpos = oldpos
-        continuer = 1
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
-
-    if (inputkey == " "):  # ne pas poser une bombe si on s'est déplacé
+    # demande de fin de tour (touche espace)
+    elif (inputkey == " "):
         newpos = oldpos
         continuer = 0
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey
 
-    else:
-        return mouvement, inputkey
+    mouvement = [oldpos, newpos, voh, continuer]
+    return mouvement, inputkey
 
-
-def movejoueur(mouvement):
+# Fonction de déplacement du joueur et de posage de bombe - interprete la fonction keyinput.
+def actionjoueur(mouvement, bombeloader):
     testmouvement, inputkey = keyinput(mouvement)
-    oldpos = testmouvement[0]
-    newpos = testmouvement[1]
-    voh = testmouvement[2]
-    continuer = testmouvement[3]
-    print(inputkey)
+    oldpos = testmouvement[0]                       # oldpos= position actuelle
+    newpos = testmouvement[1]                       # newpos = position a tester
+    voh = testmouvement[2]                          #voh = type de deplacement
+    continuer = testmouvement[3]                    #continuer = 0 ou 1
 
-    if continuer == 0:
+    if continuer == 0:                              # Cas où il y a eu touche espace: fin de tour
         mouvement = [oldpos, newpos, voh, continuer]
         return mouvement, bombeloader
 
-    if newpos != oldpos:
-        if newpos < 0 or newpos >= 100 or grille[newpos] not in [casevide, caseATP] or (oldpos % 10 == 9 and newpos % 10 == 0) or (oldpos % 10 == 0 and newpos % 10 == 9):
-                # Test si on va sur une valeur hors liste, si on va sur une case non vide ou si on cherche a "se teleporter d'un bords a l'autre"
-            message = "Vous ne pouvez pas aller là" + JAUNE + "\t\t\t█" + BLANC
-            showGameBoard(grille, message)
-            #print ("Vous ne pouvez pas avancer dans cette direction")
-            #print (mouvement)
+    elif newpos != oldpos:                          # Si la nouvelle position testée est différente de l'ancienne il s'agit d'un déplacement.
+        if passemuraille(oldpos,newpos)==True or grille[newpos] not in [casevide, caseATP]: # Cas où le déplacement n'est pas autorisé
             continuer = 1
-            return mouvement, bombeloader
-
-        if grille[newpos] == casevide:  # test si on va sur une case vide
-            if (grille[oldpos] == casejoueurbomb):  # TEST DE CASE BOMBE
+            message = "Vous ne pouvez pas aller là" + JAUNE + "\t\t\t█" + BLANC
+        elif grille[newpos] == casevide:            # Cas où le déplacement est autorisé et va sur une case vide
+            if (grille[oldpos] == casejoueurbomb):  # Cas où à l'ancienne position le joueur avait amorcé la bombe
+                grille[oldpos] = casebomb
+            else:                                   # Cas standard où l'ancienne position devient vide après déplacement du joueur
+                grille[oldpos] = casevide
+            grille[newpos] = casejoueur
+            mouvement = [oldpos, newpos, voh, continuer]
+            message = "Vous avancez" + JAUNE + "\t\t\t\t█" + BLANC
+        elif grille[newpos] == caseATP:             # Cas où le déplacement est autorisé et va sur une case d'ATP
+            if grille[oldpos] == casejoueurbomb:
                 grille[oldpos] = casebomb
             else:
                 grille[oldpos] = casevide
             grille[newpos] = casejoueur
             mouvement = [oldpos, newpos, voh, continuer]
-
             message = "Vous avancez" + JAUNE + "\t\t\t\t█" + BLANC
-            showGameBoard(grille, message)
+            boostbombe(bombeloader)                 # On boost deux bombes au hasard
 
-            #print (mouvement)
-            return mouvement, bombeloader
-
-        if grille[newpos] == caseATP:  # test si on va sur une case vide
-            if grille[oldpos] == casejoueurbomb:  # TEST DE CASE BOMBE
-                grille[oldpos] = casebomb
-            else:
-                grille[oldpos] = casevide
-            grille[newpos] = casejoueur
-            mouvement = [oldpos, newpos, voh, continuer]
-
-            message = "Vous avancez" + JAUNE + "\t\t\t\t█" + BLANC
-            boostbombe(bombeloader)
-            showGameBoard(grille, message)
-            #print (mouvement)
-            return mouvement, bombeloader
-
-    if (newpos == oldpos and voh != "n"):
+    # Si la nouvelle position testée est identique à l'ancienne il s'agit d'une tentative d'amorçage de bombe
+    # (la condition de fin de tour (continuer=0) où le joueur reste à la même position ayant été préalablement testé avec le premier if).
+    elif (newpos == oldpos and voh != "n"):         # Cas où la bombe ne peut être posé car le joueur s'est déplacé
         grille[newpos] = casejoueur
         message = "Bombes inaccessible après déplacement" + JAUNE + "\t█" + BLANC
-        showGameBoard(grille, message)
-        return mouvement, bombeloader
 
-    if (newpos == oldpos and voh == "n"):
+    elif (newpos == oldpos and voh == "n"):         # Cas où la bombe peut être posé
         grille[newpos] = casejoueurbomb
-        tabulationbomb = JAUNE + "\t\t█" + BLANC
+        tabulationdumessage = JAUNE + "\t\t█" + BLANC
         print ("INPUT=", inputkey)
         if inputkey == "1":
             bombeloader["bombe1"][0] = newpos
-            message = "Vous venez de déposer la bombe 1" + tabulationbomb
-            showGameBoard(grille, message)
-            return mouvement, bombeloader
-        if inputkey == "2":
+            message = "Vous venez de déposer la bombe 1" + tabulationdumessage
+        elif inputkey == "2":
             bombeloader["bombe2"][0] = newpos
-            message = "Vous venez de déposer la bombe 2" + tabulationbomb
-            showGameBoard(grille, message)
-            return mouvement, bombeloader
-        if inputkey == "3":
+            message = "Vous venez de déposer la bombe 2" + tabulationdumessage
+        elif inputkey == "3":
             bombeloader["bombe3"][0] = newpos
-            message = "Vous venez de déposer la bombe 3" + tabulationbomb
-            showGameBoard(grille, message)
-            return mouvement, bombeloader
-        if inputkey == "4":
+            message = "Vous venez de déposer la bombe 3" + tabulationdumessage
+        elif inputkey == "4":
             bombeloader["bombe4"][0] = newpos
-            message = "Vous venez de déposer la bombe 4" + tabulationbomb
-            showGameBoard(grille, message)
-            return mouvement, bombeloader
+            message = "Vous venez de déposer la bombe 4" + tabulationdumessage
+    showGameBoard(grille, message)
+    return mouvement, bombeloader
 
-
+# Renvoie pour un virus les directions possibles
 def dirpossiblevirus(virus, numvirus):
     posvirus = virus[numvirus]
     dirpossible = []
-
-    if posvirus > 0:  # permet de ne pas dépasser les valeurs de la grille
-        if grille[posvirus - 1] == casevide and posvirus % 10 != 0:
-            dirpossible.append(2)
-
-    if posvirus < 99:  # permet de ne pas dépasser les valeurs de la grille
-        if grille[posvirus + 1] == casevide and posvirus % 10 != 9:
-            dirpossible.append(3)
-
-    if posvirus > 9:  # permet de ne pas dépasser les valeurs de la grille
+    if posvirus > 9:
         if grille[posvirus - 10] == casevide:
             dirpossible.append(0)
-
-    if posvirus < 90:  # permet de ne pas dépasser les valeurs de la grille
+    if posvirus < 90:
         if grille[posvirus + 10] == casevide:
             dirpossible.append(1)
-
+    if posvirus > 0:
+        if grille[posvirus - 1] == casevide and posvirus % 10 != 0: #le virus ne peut aller vers la gauche si il est contre la paroi
+            dirpossible.append(2)
+    if posvirus < 99:
+        if grille[posvirus + 1] == casevide and posvirus % 10 != 9: #le virus ne peut aller vers la droite si il est contre la paroi
+            dirpossible.append(3)
+    if dirpossible==[]:   #Dans le cas où les conditions ne sont pas remplis le virus essaie d'aller vers la gauche (sinon une erreur est renvoyé)
+        dirpossible.append(1)
     return dirpossible
 
-
+# Appel la fonction de déplacement aléatoire des virus en fonction de la direction possible
 def randommovevirus(virus):
     for numvirus in range(len(virus)):
         if virus[numvirus] != "mort":
             oldvirpos = virus[numvirus]
-            # test des cases alentours pour choisir une direction où le virus ne sera pas bloqué
-            dirpossible = dirpossiblevirus(virus, numvirus)
+            dirpossible = dirpossiblevirus(virus, numvirus)  # choix des directions où le virus ne sera pas bloqué
             direction = random.choice(dirpossible)
-            j = 0
             if direction == 0:  # haut
                 dirvalue = -10
-                maxdistance = int(oldvirpos / 10) + (oldvirpos % 10 > 0)
-                distance = random.randint(1, maxdistance)  # distance a parcourir
-                while j < distance:
-                    movevirus(virus, numvirus, dirvalue)
-                    j = j + 1
-
-            if direction == 1:  # bas
+                maxdistance = int(oldvirpos / 10) + (oldvirpos % 10 > 0)  # oldvirpos % 10 > 0 arrondie à la valeur supérieure
+            elif direction == 1:  # bas
                 dirvalue = 10
-                maxdistance = 10 - int(oldvirpos / 10) + (oldvirpos % 10 > 0)  # oldvirpos % 10 > 0 return 1 si true -> donc ajoute 1 si il y a un reste
-                distance = random.randint(1, maxdistance)  # distance a parcourir
-                while j < distance:
-                    movevirus(virus, numvirus, dirvalue)
-                    j = j + 1
-
-            if direction == 2:  # gauche
+                maxdistance = 10 - int(oldvirpos / 10) + (oldvirpos % 10 > 0)
+            elif direction == 2:  # gauche
                 dirvalue = -1
                 maxdistance = oldvirpos % 10 + 1
-                distance = random.randint(1, maxdistance)  # distance a parcourir
-                while j < distance:
-                    movevirus(virus, numvirus, dirvalue)
-                    j = j + 1
-
-            if direction == 3:  # gauche
+            elif direction == 3:  # droite
                 dirvalue = +1
                 maxdistance = 10 - (oldvirpos % 10)
-                distance = random.randint(1, maxdistance)  # distance a parcourir
-                while j < distance:
-                    movevirus(virus, numvirus, dirvalue)
-                    j = j + 1
+            distance = random.randint(1, maxdistance)  # distance a parcourir
+            pas = 0
+            while pas < distance:
+                movevirus(virus, numvirus, dirvalue)
+                pas = pas + 1
 
-
+# Fonction de déplacement des virus
 def movevirus(virus, numvirus, dirvalue):
     oldvirpos = virus[numvirus]
-    #print ("OLDVIRPOS=",oldvirpos)
-    newposvir = oldvirpos + dirvalue  # test de la case cible
-    #print ("TESTMOVEVIRUS=",newposvir)
+    newposvir = oldvirpos + dirvalue
     message = "Les virus se déplacent" + JAUNE + "\t\t\t█" + BLANC
     if (newposvir > 0 and newposvir < 100):
-        if (oldvirpos % 10 == 9 and newposvir % 10 == 0) or (oldvirpos % 10 == 0 and newposvir % 10 == 9):
-            #print("ON PEUT PAS TRAVERSER LES MURS T'ES FOU")
+        if passemuraille(oldvirpos,newposvir) is True:
             message = "Le virus tente en vain de passer la paroi" + JAUNE + "\t█" + BLANC
             time.sleep(0.3)
-            showGameBoard(grille, message)
         else:
-            # verification que la valeur n'est pas hors range ou ne traverse pas les murs
             if grille[newposvir] == casevide:
-
                 grille[oldvirpos] = casevide
                 virus[numvirus] = newposvir
                 grille[newposvir] = casevirus
-                #print ("j'ai bougé normalement")
                 time.sleep(0.3)
-                showGameBoard(grille, message)
-
             else:
-                #print ("le virus peut pas bouger plus loin")
                 time.sleep(0.1)
-                showGameBoard(grille, message)
+    showGameBoard(grille, message)
 
-    # else:
-    #    print("PAS DANS LA RANGE DE LA GRILLE")
-
-
+# Selectionne deux bombes aléatoirement parmis le chargeur et incrémente de 1 sa puissance
 def boostbombe(bombeloader):
-    i = 0
-    while i < 2:
-        selectrandombombe = random.choice(list(bombeloader.keys()))
-        bombeloader[selectrandombombe][1] = bombeloader[selectrandombombe][1] + 1
-        i = i + 1
+    selectrandombombe = random.sample(list(bombeloader.keys()),2)
+    bombeloader[selectrandombombe[0]][1] = bombeloader[selectrandombombe[0]][1] + 1
+    bombeloader[selectrandombombe[1]][1] = bombeloader[selectrandombombe[1]][1] + 1
     return bombeloader
 
 
@@ -805,7 +718,7 @@ def startgame(virus, mouvement, grille, message, bombeloader, ATP):
 
     while victory == 0 and rip == 0:
         while mouvement[3] == 1:
-            mouvement, bombeloader = movejoueur(mouvement)
+            mouvement, bombeloader = actionjoueur(mouvement,bombeloader)
         randommovevirus(virus)
         boom(bombeloader)
         virus = constatdesmorts(virus)
