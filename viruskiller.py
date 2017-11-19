@@ -595,9 +595,15 @@ def boostbombe(bombeloader):
     bombeloader[selectrandombombe[1]][1] = bombeloader[selectrandombombe[1]][1] + 1
     return bombeloader
 
-
+# Fonction explosion des bombes
 def boom(bombeloader):
     activebombe = []
+    for bombe in bombeloader.keys():
+        if bombeloader[bombe][0] != "n":
+            activebombe.append(bombeloader[bombe][0])
+            activebombe.append(bombeloader[bombe][1])
+            bombeloader[bombe][1] = "X"
+    """
     if bombeloader["bombe1"][0] != "n":
         activebombe.append(bombeloader["bombe1"][0])
         activebombe.append(bombeloader["bombe1"][1])
@@ -614,6 +620,7 @@ def boom(bombeloader):
         activebombe.append(bombeloader["bombe4"][0])
         activebombe.append(bombeloader["bombe4"][1])
         bombeloader["bombe4"][1] = "X"
+    """
     print("BOMBE ACTIVE:  ", activebombe)
 
     if activebombe != []:
