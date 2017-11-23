@@ -24,7 +24,7 @@ JAUNE = "\033[33m"
 # type de case a print dans la grille
 casevirus = ROUGE + "\t (◣_◢) \t" + BLANC
 casevide = ROUGE + "\t   .   \t" + BLANC
-casejoueur = VERT + "\t【•◡•】\t" + BLANC
+casejoueur = VERT + "\t (■_■) \t" + BLANC
 casejoueurbomb = ORANGE + "\t(■_■)☢\t" + BLANC
 casebomb = "" + JAUNE + "\t  💣 \t" + BLANC
 caseATP = BLEU + "\t ( ϟ ) \t" + BLANC
@@ -121,18 +121,18 @@ regles = ORANGE + """
         |     - Passer les parois cellulaires                                                                             |
         '-----------------------------------------------------------------------------------------------------------------' """ + BLANC
 keyboard = BLEU + """
-                        HAUT                                     BOMBE 1               BOMBE 2              BOMBE 3              BOMBE 4
-                  .----------------.                        .----------------.   .----------------.   .----------------.   .----------------.
-                 | .--------------. |                      | .--------------. | | .--------------. | | .--------------. | | .--------------. |
-                 | |   ________   | |                      | |     __       | | | |    _____     | | | |    ______    | | | |   _    _     | |
-                 | |  |  __   _|  | |                      | |    /  |      | | | |   / ___ `.   | | | |   / ____ `.  | | | |  | |  | |    | |
-                 | |  |_/  / /    | |                      | |    `| |      | | | |  |_/___) |   | | | |   `'  __) |  | | | |  | |__| |_   | |
-                 | |     .'.' _   | |                      | |     | |      | | | |   .'____.'   | | | |   _  |__ '.  | | | |  |____   _|  | |
-                 | |   _/ /__/ |  | |                      | |    _| |_     | | | |  / /____     | | | |  | \____) |  | | | |      _| |_   | |
-                 | |  |________|  | |                      | |   |_____|    | | | |  |_______|   | | | |   \______.'  | | | |     |_____|  | |
-                 | |              | |                      | |              | | | |              | | | |              | | | |              | |
-                 | '--------------' |                      | '--------------' | | '--------------' | | '--------------' | | '--------------' |
-                  '----------------'                        '----------------'   '----------------'   '----------------'   '----------------'
+                           HAUT                                     BOMBE 1               BOMBE 2              BOMBE 3              BOMBE 4
+                     .----------------.                        .----------------.   .----------------.   .----------------.   .----------------.
+                    | .--------------. |                      | .--------------. | | .--------------. | | .--------------. | | .--------------. |
+                    | |   ________   | |                      | |     __       | | | |    _____     | | | |    ______    | | | |   _    _     | |
+                    | |  |  __   _|  | |                      | |    /  |      | | | |   / ___ `.   | | | |   / ____ `.  | | | |  | |  | |    | |
+                    | |  |_/  / /    | |                      | |    `| |      | | | |  |_/___) |   | | | |   `'  __) |  | | | |  | |__| |_   | |
+                    | |     .'.' _   | |                      | |     | |      | | | |   .'____.'   | | | |   _  |__ '.  | | | |  |____   _|  | |
+                    | |   _/ /__/ |  | |                      | |    _| |_     | | | |  / /____     | | | |  | \____) |  | | | |      _| |_   | |
+                    | |  |________|  | |                      | |   |_____|    | | | |  |_______|   | | | |   \______.'  | | | |     |_____|  | |
+                    | |              | |                      | |              | | | |              | | | |              | | | |              | |
+                    | '--------------' |                      | '--------------' | | '--------------' | | '--------------' | | '--------------' |
+                     '----------------'                        '----------------'   '----------------'   '----------------'   '----------------'
 .----------------.   .----------------.   .----------------.  .---------------------------------------------------------------------------------.
 | .--------------. | | .--------------. | | .--------------. | | .-----------------------------------------------------------------------------.  |
 | |    ___       | | | |    _______   | | | |  ________    | | | |                                                                              | |
@@ -218,7 +218,7 @@ def lore():
        C'est le moment de mettre vos nerfs à rude épreuve.                                                                                     \\\ /////
        Vos derniers exploits dans la bataille contre ce satané R-HuM, sont célèbres dans le corps entier.                                      |     '|
        Plusieurs virus non-identifiés ont fait irruption dans des cellules. Ils sont extrêmement dangereux.                                   (| _  _ |)
-       En effet de par leurs déplacements totalement aléatoire, ils sont difficilement atteignables et particulièrement irritants.             |` |   |
+       En effet de par leurs déplacements totalement aléatoires, ils sont difficilement atteignables et particulièrement irritants.            |` |   |
        Ils sont de plus capables de déclencher des stress cellulaires provoquant une érruption de réactions comme : """
           + BLANC + "\t\t               |  __  |")
     print("\t\t  - " + ROUGE + "NameError Traceback (most recent call last)" +
@@ -231,8 +231,13 @@ def lore():
 
 
 def credit():
-    print(BLEU + thomaspierrot + BLANC)
-    time.sleep(2)
+
+    for i in range(100):
+        os.system('clear')
+        print(BLEU + thomaspierrot + BLANC+"\n\n\n")
+        print(BLEU+"\t\t\t Loading: "+BLANC+str(100*i/100)+" %"+BLANC + " "*i + VERT +"(■_■)"+ROUGE +"   (◣_◢)"+BLANC)
+        print(""+BLEU+"\t\t\t______________________________" + "_"*i+BLANC+"_"*(100-i))
+        time.sleep(0.04)
 
 # Explications des règles
 def instructions():
@@ -427,7 +432,7 @@ def keyinput(mouvement):
     inputkey = input("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Action :  ")
     # aller vers le haut (z) si on s'est déplacé verticalement (v) ou pas encore déplacé (n)
     if inputkey == "z" and (voh == "v" or voh == "n"):
-        newpos = oldpos - 10    # Pour aller vers le haut on enlève 10 à l'index
+        newpos = oldpos - 10    # Pour aller vers le haut on enlève 10 à l'index.
         voh = "v"
 
     # aller vers la gauche (q) si on s'est déplacé horizontalement (h) ou pas encore déplacé (n)
@@ -458,7 +463,10 @@ def keyinput(mouvement):
     elif (inputkey == " "):
         newpos = oldpos
         continuer = 0
-
+    else:    
+        mouvement = [oldpos, newpos, voh, continuer]
+        return mouvement, inputkey    
+    
     mouvement = [oldpos, newpos, voh, continuer]
     return mouvement, inputkey
 
@@ -708,7 +716,7 @@ def menu():
     print (JAUNE + iconbombe + BLANC)
     lore()
     time.sleep(1)
-    input(ORANGE + "\n\n    Appuyer sur ENTRER pour continuer..." + BLANC)
+    input(ORANGE + "\n\n       Appuyer sur ENTRER pour continuer..." + BLANC)
     os.system("clear")
     print (JAUNE + iconbombe + BLANC)
     print (VIOLET + iconmenu + BLANC)
