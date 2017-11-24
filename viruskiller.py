@@ -306,10 +306,8 @@ def initvirus(virus):
     while grille[virus[0]] != casevide or grille[virus[1]] != casevide or grille[virus[2]] != casevide or grille[virus[3]] != casevide:
         virus = random.sample(range(0, 100), 4)
     # on remplie la grille avec les 4 virus
-    grille[virus[0]] = casevirus
-    grille[virus[1]] = casevirus
-    grille[virus[2]] = casevirus
-    grille[virus[3]] = casevirus
+    for i in range (len(virus)):
+        grille[virus[i]] = casevirus
     return virus
 
 # Renvoie une valeur aléatoire dans la grille à un emplacement casevide;
@@ -423,6 +421,8 @@ def spawnATP():
 
 # Gestion des touches utilisés par le joueur pendant son tour de jeu.
 def keyinput(mouvement):
+    message="Début de votre tour" + JAUNE + "\t\t\t\t█" + BLANC
+    showGameBoard(grille, message)
     # newpos et oldpos sont utilisés pour le déplacement, oldpos est conservé si la direction testée (newpos) ne réponds pas aux critères de déplacement
     newpos = mouvement[0]
     oldpos = mouvement[1]
@@ -430,6 +430,9 @@ def keyinput(mouvement):
     continuer = 1  # continuer le déplacement tant que continuer = 1
 
     inputkey = input("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Action :  ")
+    while inputkey not in ["z","q","s","d","1","2","3","4"," "]:
+        inputkey = input("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t    ► Selectionnez la bonne touche :  ")
+
     # aller vers le haut (z) si on s'est déplacé verticalement (v) ou pas encore déplacé (n)
     if inputkey == "z" and (voh == "v" or voh == "n"):
         newpos = oldpos - 10    # Pour aller vers le haut on enlève 10 à l'index.
@@ -463,10 +466,7 @@ def keyinput(mouvement):
     elif (inputkey == " "):
         newpos = oldpos
         continuer = 0
-    else:    
-        mouvement = [oldpos, newpos, voh, continuer]
-        return mouvement, inputkey    
-    
+ 
     mouvement = [oldpos, newpos, voh, continuer]
     return mouvement, inputkey
 
@@ -475,8 +475,8 @@ def actionjoueur(mouvement, bombeloader):
     testmouvement, inputkey = keyinput(mouvement)
     oldpos = testmouvement[0]                       # oldpos= position actuelle
     newpos = testmouvement[1]                       # newpos = position a tester
-    voh = testmouvement[2]  # voh = type de deplacement
-    continuer = testmouvement[3]  # continuer = 0 ou 1
+    voh = testmouvement[2]                          # voh = type de deplacement
+    continuer = testmouvement[3]                    # continuer = 0 ou 1
 
     if continuer == 0:                              # Cas où il y a eu touche espace: fin de tour
         mouvement = [oldpos, newpos, voh, continuer]
@@ -621,7 +621,7 @@ def boom(bombeloader):
                     grille[posbombes - 10 * i] = motif
                 if posbombes + 10 * i < 99:
                     grille[posbombes + 10 * i] = motif
-                if rayon <= 2:  # Explosion en croix pour les bombes de puissance <= 2
+                if rayon <= 2:  # Explosion en croix pour les bombes de rayons <= 2
                     if posbombes - 1 * i >= 0 and (posbombes - 1 * i) % 10 != 9:
                         grille[posbombes - 1 * i] = motif
                     if posbombes + 1 * i < 99 and (posbombes + 1 * i) % 10 != 0:
@@ -694,9 +694,9 @@ def startgame(virus, mouvement, grille, message, bombeloader, ATP):
     rip = loose(bombeloader)                               # Condition de défaire
 
     while victory == 0 and rip == 0:                       # Jouer tant qu'il n'y a ni victoire ni défaite
+        randommovevirus(virus)                             # Mouvement des virus  
         while mouvement[3] == 1:                           # Fonction mouvement tant que mouvement[continuer] == 1
             mouvement, bombeloader = actionjoueur(mouvement, bombeloader)
-        randommovevirus(virus)                             # Mouvement des virus
         boom(bombeloader)                                  # Explosion éventuelle des bombes
         virus = constatdesmorts(virus)                     # Recalcul du nombre de virus encore en vie
         spawnATP()                                         # Régénère le nombre d'ATP sur la grille
