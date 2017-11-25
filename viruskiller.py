@@ -386,13 +386,13 @@ def randommovevirus(virus):
             direction = random.choice(dirpossible)
             if direction == 0:  # haut
                 dirvalue = -10
-                maxdistance = int(oldvirpos / 10) + (oldvirpos % 10 > 0)  # oldvirpos % 10 > 0 arrondie à la valeur supérieure
+                maxdistance = int(oldvirpos / 10)
             elif direction == 1:  # bas
                 dirvalue = 10
-                maxdistance = 10 - int(oldvirpos / 10) + (oldvirpos % 10 > 0)
+                maxdistance = 10 - int(oldvirpos / 10)
             elif direction == 2:  # gauche
                 dirvalue = -1
-                maxdistance = oldvirpos % 10 + 1
+                maxdistance = oldvirpos % 10
             elif direction == 3:  # droite
                 dirvalue = +1
                 maxdistance = 10 - (oldvirpos % 10)
@@ -511,6 +511,7 @@ def loose(bombeloader):
     return rip
 
 
+
 # Fonction tour de jeu
 def startgame(virus, mouvement, grille, message, bombeloader, ATP):
     initmurs()                                             # Initialise les murs
@@ -525,6 +526,8 @@ def startgame(virus, mouvement, grille, message, bombeloader, ATP):
         randommovevirus(virus)                             # Mouvement des virus  
         while mouvement[3] == 1:                           # Fonction mouvement tant que mouvement[continuer] == 1
             mouvement, bombeloader = actionjoueur(mouvement, bombeloader)
+        mouvement[2] = "n"                                 # Réinitialise le type de mouvement du joueur à "n"
+        mouvement[3] = 1                                   # Ré-autorise le joueur à bouger au prochain tours
         boom(bombeloader)                                  # Explosion éventuelle des bombes
         virus = constatdesmorts(virus)                     # Recalcul du nombre de virus encore en vie
         spawnATP()                                         # Régénère le nombre d'ATP sur la grille
@@ -532,11 +535,9 @@ def startgame(virus, mouvement, grille, message, bombeloader, ATP):
         bombemolle(bombeloader)                            # Décrémente la puissance des bombes
         victory = win(virus)                               # Re-vérifie si les conditions de victoire sont réunies (victory = 1 ?)
         rip = loose(bombeloader)                           # Re-vérifie si les conditions de défaite sont réunies (victory = 1 ?)
-        mouvement[2] = "n"                                 # Réinitialise le type de mouvement du joueur à "n"
-        mouvement[3] = 1                                   # Ré-autorise le joueur à bouger
 
-    input('     Appuyer sur entrer pour continuer... ')    # Partie terminée
-    menu()
+    input('     Appuyer sur entrer pour quitter... ')    # Partie terminée
+    sys.exit()
 
 
 def menu():
