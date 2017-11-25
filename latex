@@ -1,0 +1,74 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\author{Pierre Jacquet, Thomas Blanc}
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+
+\title{Rapport de Projet : Programmation du jeu Virus Killer via le language Python. }
+\date{27/11/2017}
+\begin{document}
+	\maketitle
+    \section{Introduction}
+    Le but de ce projet est de réaliser un programme en langage python pour le jeu Virus Killer, suivant les instructions indiquées. Pour cela, une analyse des consignes et mécaniques du jeu a été réalisée afin de les traduire en concepts logiques appropriés a la programmation, puis des solutions pour implémenter ces concepts au sein du programme ont été élaborées. Enfin, le code Python a été implémenté, et sera détaillé dans ce rapport. 
+    
+    \section{Analyse}
+    
+    La description du jeu a été transposée en règles et objets plus facilement adaptables à des éléments de programmation. 
+     
+    \subsection{Principe du jeu}
+    Le jeu repose sur deux actions possibles, se déplacer et poser des bombes, ces deux actions interagissant l'une avec l'autre (il est impossible de placer une bombe après s’être déplacer), elles seront prise en charge par un seul mécanisme.
+    
+    \subsection{Le plateau de jeu}
+    Le plateau de jeu est une grille de 10 lignes par 10 colonnes, en deux dimentions. Cet espace est compté en nombre de cases, pour la longueur de déplacement et le rayon d'action des bombes.
+    
+    \subsection{Les éléments}
+    Les éléments sont tous les objets qui seront placés sur le plateau. Ils comprennent le joueur, les virus, les bombes, les ATP, et les murs. 
+    
+    \subsubsection{le joueur}
+    Le joueur a un avatar unique placé aléatoirement sur la grille au début du jeu, il est capable de se déplacer dans une des 4 directions a chaque tour, d'un nombre de cases choisi par le joueur, et peut poser une bombe de son choix s'il ne s'est pas encore déplacé dans le tour. Il doit pouvoir se déplacer dans les cases contenant l'ATP, mais pas dans les cases contenant les virus ou les murs.
+    
+    \subsubsection{les virus}
+    Les virus sont représentés par des avatars sur la grille, leur seule action possible est de se déplacer dans une des 4 directions, d'un nombre de cases choisi de façon aléatoire par le programme. Ils ne peuvent pas traverser les cases occupées par le joueur, les ATP, les bombes ou les murs.
+    Il y a 4 virus au début de la partie, placés dans des cases aléatoires.
+    
+    \subsubsection{les bombes}
+    Au début du jeu, le joueur a 4 bombes, ces bombes sont définies par leur puissances, qui sont au début égale a 8, 6, 4, et 2. Lorsqu'une bombe est posée par le joueur, sa puissance détermine le nombre de cases que prendra l'explosion (un nombre de cases égal a la moitié de la puissance au dessus de la bombe, et l'autre moitié en dessous.)
+    Lorsqu'une bombe est posée,
+    \subsubsection{les ATP}
+    \subsubsection{les murs}
+    
+    \subsection{Les états de victoire et défaites}
+    
+    \subsection{Déroulement d'un tour}
+    
+    \section{Concept}
+    
+    \section{Réalisation}
+    Virus Killer a été codé en python 3 (version 3.5.3). Nous avons choisi cette version de python disponible sur les ordinateurs du CREMI, car elle permet de changer les charactères en fin de ligne, lors d'un print de manière simple.\\
+    Le jeu a été conçu pour un terminal en plein écran. L'affichage du jeu dans étant relativement grand il peut être nécessaire selon les écrans d'ajuster la taille de police du terminal. La manipulation est simple, il suffit de changer le profil du terminal (accessible par clique droit sur ce dernier, en changeant les paramètres d'affichage et notamment de police). Cela permet un meilleur lisibilité des composants du jeu.\\
+        
+    Un menu a été créé permettant d'accéder au jeu en lui même, aux instructions ou à la sortie du programme.\\ 
+
+	Le programme est disponible sur le serveur interne du CREMI:\\
+    /net/stockage/bioinfo\_2017\_M1/Pierre\_Thomas/viruskiller.py\\
+    
+    et également sur Github:\\
+    https://github.com/pierrejacquet/biovirusgameproject\\
+    
+    \subsection{Début du Programme}
+    Après l'affichage des crédits, le joueur accède au menu permettant de lancer le jeu en lui même, ou les instructions. Chaque choix 
+    \subsection{}
+   
+   
+   
+   \subsection{Code source du jeu}
+    %NOTE : chercher moyen de display le code de façon lisible.
+   
+   \section{Conclusion}
+   Nous avons réussi a implémenter les éléments requis au fonctionnement du programme et a créer un jeu fonctionnel, d'une façon modulable permettant d'implémenter de nouveaux modes de difficultés ou de changer les éléments de façon non destructrice pour le code. % A compléter, je suis pas bien sur de quoi ajouter pour l'instant. METTRE EN IMPERSONNEL
+
+\end{document}
+
