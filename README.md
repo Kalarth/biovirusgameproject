@@ -1,5 +1,5 @@
 # Virus Killer
-
+Developped by Thomas Blanc and Pierre Jacquet
 
 ![Screenshot in game](https://raw.githubusercontent.com/pierrejacquet/biovirusgameproject/master/gamescreen.png)
 
